@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
+import { useCatering } from '../context/CateringContext'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { mode, toggle } = useTheme()
+  const { auth, isAuthenticated } = useCatering()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.pageYOffset > 20)
@@ -29,8 +31,20 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
-            <Link to="/my-orders" className="px-4 py-2 rounded-xl text-sm font-medium th-muted hover:th-heading hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300">
-              My Orders
+            <Link
+              to="/account"
+              className="ml-2 w-10 h-10 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300"
+              title={isAuthenticated ? 'Profile and orders' : 'Sign in'}
+            >
+              {isAuthenticated && auth.profile?.firstName ? (
+                <span className="text-sm font-bold th-heading">
+                  {auth.profile.firstName.slice(0, 1).toUpperCase()}
+                </span>
+              ) : (
+                <svg className="w-4 h-4 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              )}
             </Link>
 
             {/* Theme Toggle */}
@@ -51,7 +65,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Mobile: Theme Toggle + Menu Button */}
+          {/* Mobile: Theme Toggle + Profile + Menu Button */}
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={toggle}
@@ -67,6 +81,21 @@ export default function Header() {
                 </svg>
               )}
             </button>
+            <Link
+              to="/account"
+              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300"
+              title={isAuthenticated ? 'Profile and orders' : 'Sign in'}
+            >
+              {isAuthenticated && auth.profile?.firstName ? (
+                <span className="text-sm font-bold th-heading">
+                  {auth.profile.firstName.slice(0, 1).toUpperCase()}
+                </span>
+              ) : (
+                <svg className="w-5 h-5 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A9 9 0 1118.88 17.8M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              )}
+            </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="relative w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300"
@@ -87,8 +116,8 @@ export default function Header() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 glass rounded-2xl p-4 space-y-1 animate-slide-up">
-            <Link to="/my-orders" onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 rounded-xl th-body hover:th-heading hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 font-medium">
-              My Orders
+            <Link to="/account" onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 rounded-xl th-body hover:th-heading hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 font-medium">
+              {isAuthenticated ? 'Profile & Orders' : 'Sign In'}
             </Link>
           </div>
         )}

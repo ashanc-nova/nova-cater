@@ -22,6 +22,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Home />} />
           <Route path="/order-details" element={<OrderDetails />} />
+          <Route path="/account" element={<MyOrders />} />
           <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/order-summary" element={<OrderSummary />} />
         </Routes>

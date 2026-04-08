@@ -8,7 +8,6 @@ export default function Cart() {
   const [hovered, setHovered] = useState(false)
 
   const proceedToCheckout = () => {
-    localStorage.setItem('snsAppCart', JSON.stringify(cart))
     navigate('/order-details')
   }
 
@@ -53,10 +52,10 @@ export default function Cart() {
             {/* Items */}
             <div className="max-h-[320px] overflow-y-auto scrollbar-hide p-2">
               {cart.map((item, index) => (
-                <div key={index} className="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <div key={item.refId || index} className="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold th-heading truncate">{item.name}</p>
-                    <p className="text-xs th-ghost mt-0.5">{item.quantity} × {item.unit} · Serves {item.serves * item.quantity}</p>
+                    <p className="text-xs th-ghost mt-0.5">{item.quantity} × {item.unit}</p>
                   </div>
                   <div className="flex items-center gap-1 ml-3">
                     <button onClick={() => decreaseQuantity(index)} className="w-6 h-6 rounded-lg bg-black/5 dark:bg-white/5 th-muted flex items-center justify-center text-xs font-bold hover:bg-black/10 dark:hover:bg-white/10 transition-all">-</button>

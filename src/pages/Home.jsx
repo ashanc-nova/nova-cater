@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import Carousel from '../components/Carousel'
 import Cart from '../components/Cart'
 import { useCart } from '../context/CartContext'
-import { categories, menuItems } from '../data/menuData'
+import { useCatering } from '../context/CateringContext'
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState(0)
   const [menuLayout, setMenuLayout] = useState('grid')
   const { addToCart, isInCart, getCartItemIndex, getCartItemQuantity, increaseQuantity, decreaseQuantity } = useCart()
+  const { bootstrapComplete, catalog, catalogLoading, catalogError } = useCatering()
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  const currentItems = menuItems[categories[activeCategory]] || []
+  const categories = catalog?.categoryList || []
+  const currentCategory = categories[activeCategory] || null
+  const currentItems = currentCategory?.packages || []
+
+  useEffect(() => {
+    if (activeCategory >= categories.length) {
+      setActiveCategory(0)
+    }
+  }, [activeCategory, categories.length])
 
   return (
     <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
@@ -32,12 +40,6 @@ export default function Home() {
             <p className="th-muted text-base max-w-lg leading-relaxed mb-4">
               Platters, trays, and shake packs for any event. The original better burger since 1934.
             </p>
-            <div className="flex items-center gap-4">
-              <Link to="/my-orders" className="btn-ghost text-sm py-2.5 px-5 inline-flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                View My Orders
-              </Link>
-            </div>
           </div>
 
           {/* Right: Offers Carousel */}
@@ -92,12 +94,17 @@ export default function Home() {
         <div>
           {/* Menu Section */}
           <div>
+            {catalogError && (
+              <div className="glass rounded-2xl p-4 text-sm text-red-300 mb-6">
+                {catalogError}
+              </div>
+            )}
             {/* Category Tabs + Layout Toggle */}
             <div className="flex items-center justify-between mb-8 gap-4">
               <div className="flex gap-2 overflow-x-auto scrollbar-hide flex-1">
                 {categories.map((category, index) => (
                   <button
-                    key={index}
+                    key={category.refId}
                     onClick={() => setActiveCategory(index)}
                     className={`px-5 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
                       activeCategory === index
@@ -105,7 +112,7 @@ export default function Home() {
                         : 'border border-black/10 dark:border-white/10 th-muted hover:th-heading'
                     }`}
                   >
-                    {category}
+                    {category.name}
                   </button>
                 ))}
               </div>
@@ -134,23 +141,32 @@ export default function Home() {
               </div>
             </div>
 
+            {!bootstrapComplete || catalogLoading ? (
+              <div className="glass rounded-3xl p-10 text-center">
+                <p className="th-muted">Loading catering packages...</p>
+              </div>
+            ) : currentItems.length === 0 ? (
+              <div className="glass rounded-3xl p-10 text-center">
+                <p className="th-muted">No menu items are available from the sandbox catalog for this restaurant right now.</p>
+              </div>
+            ) : null}
+
             {/* GRID LAYOUT (2 col) */}
-            {menuLayout === 'grid' && (
+            {menuLayout === 'grid' && currentItems.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {currentItems.map((item, index) => (
-                  <div key={`grid-${index}`} className="glass rounded-3xl overflow-hidden hover-card group">
+                  <div key={item.refId || `grid-${index}`} className="glass rounded-3xl overflow-hidden hover-card group h-full flex flex-col">
                     <div className="relative">
-                      <img src={item.image} alt={item.name} className="w-full h-44 object-cover"/>
+                      <img src={item.imageUrl} alt={item.name} className="w-full h-44 object-cover"/>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                       <div className="absolute bottom-3 left-3 flex gap-2">
-                        <span className="badge-glass text-primary-300 text-xs backdrop-blur-md">Serves {item.serves}</span>
                         <span className="badge-glass th-ghost text-xs backdrop-blur-md">{item.unit}</span>
                       </div>
                     </div>
-                    <div className="p-5">
+                    <div className="p-5 flex flex-1 flex-col">
                       <h3 className="font-display font-bold th-heading group-hover:text-primary-400 transition-colors mb-1.5">{item.name}</h3>
-                      <p className="th-faint text-sm leading-relaxed mb-4 line-clamp-2">{item.description}</p>
-                      <div className="flex items-center justify-between">
+                      <p className="th-faint text-sm leading-relaxed mb-4 line-clamp-2 flex-1">{item.description}</p>
+                      <div className="flex items-center justify-between mt-auto">
                         <div>
                           <span className="text-xl font-bold gradient-text">${item.price.toFixed(2)}</span>
                           <span className="text-xs th-ghost ml-1">/ {item.unit.split(' ')[0]}</span>
@@ -177,21 +193,21 @@ export default function Home() {
             )}
 
             {/* COMPACT GRID LAYOUT (3 col) */}
-            {menuLayout === 'compact' && (
+            {menuLayout === 'compact' && currentItems.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {currentItems.map((item, index) => (
-                  <div key={`compact-${index}`} className="glass rounded-2xl overflow-hidden hover-card group">
+                  <div key={item.refId || `compact-${index}`} className="glass rounded-2xl overflow-hidden hover-card group h-full flex flex-col">
                     <div className="relative">
-                      <img src={item.image} alt={item.name} className="w-full h-28 object-cover"/>
+                      <img src={item.imageUrl} alt={item.name} className="w-full h-28 object-cover"/>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                       <div className="absolute bottom-2 left-2">
-                        <span className="badge-glass text-primary-300 text-[10px] backdrop-blur-md">Serves {item.serves}</span>
+                        <span className="badge-glass th-ghost text-[10px] backdrop-blur-md">{item.unit}</span>
                       </div>
                     </div>
-                    <div className="p-3">
+                    <div className="p-3 flex flex-1 flex-col">
                       <h3 className="font-display font-bold text-sm th-heading group-hover:text-primary-400 transition-colors mb-0.5 truncate">{item.name}</h3>
-                      <p className="text-[10px] th-ghost mb-1.5 truncate">{item.unit}</p>
-                      <div className="flex items-center justify-between">
+                      <p className="text-[10px] th-ghost mb-1.5 truncate flex-1">{item.unit}</p>
+                      <div className="flex items-center justify-between mt-auto">
                         <span className="text-sm font-bold gradient-text">${item.price.toFixed(2)}</span>
                         <div>
                           {!isInCart(item) ? (
