@@ -1,0 +1,70 @@
+// src/components/organisms/Footer/Footer.module.scss
+.footer {
+  max-width: 1124px;
+  width: 100%;
+  border-top: 1px solid #d3d3d5;
+  margin: 0 auto;
+
+  .container {
+    padding: 24px 16px;
+
+    @media (min-width: 768px) {
+      padding: 24px 16px;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0;
+    }
+  }
+
+  .brand {
+    font-size: 14px;
+    font-weight: 500;
+    color: #121214;
+    line-height: 21px;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 30px;
+    }
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: 48px;
+    }
+  }
+
+  .link {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    color: #121214;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    // &:hover {
+    //   color: #121214;
+    // }
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+}

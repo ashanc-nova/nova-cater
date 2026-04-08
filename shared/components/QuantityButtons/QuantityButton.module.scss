@@ -1,0 +1,103 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
+  background: linear-gradient(146.5deg, var(--universal-white-alpha-50) 15.66%, var(--morning-fog-800) 82.52%);
+  color: var(--type-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  padding: 0;
+
+  /* Gradient border via pseudo-element ring (clipping method) - same as TertiaryRoundButton */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1.11px;
+    background: linear-gradient(180deg, var(--universal-white) 0%, var(--morning-fog-700) 100%);
+    -webkit-mask: linear-gradient(var(--universal-white) 0 0) content-box, linear-gradient(var(--universal-white) 0 0);
+    mask: linear-gradient(var(--universal-white) 0 0) content-box, linear-gradient(var(--universal-white) 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  // States
+  &:hover:not(:disabled) {
+    background: linear-gradient(146.5deg, rgba(153, 0, 30, 0) 15.66%, var(--color-background-button-primary-disabled) 82.52%);
+
+    &::before {
+      background: linear-gradient(180deg, rgba(153, 0, 30, 0) 0%, var(--color-background-button-primary-disabled) 100%);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background: linear-gradient(146.5deg, var(--universal-white-alpha-50) 15.66%, var(--morning-fog-800) 82.52%);
+    color: #00000040;
+    &::before{
+      background: linear-gradient(180deg, var(--universal-white-alpha-50) 0%, var(--morning-fog-800) 100%);
+    }
+  }
+}
+
+// Sizes
+.xsmall {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.small {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+}
+
+.medium {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+
+.large {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+
+.decrementor, .incrementor {
+  &::before {
+    background: linear-gradient(180deg, var(--universal-white) 0%, var(--color-background-button-primary-default) 100%);
+  }
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(146.5deg, rgba(153, 0, 30, 0) 15.66%, color-mix(in srgb, var(--color-background-button-primary-disabled) 20%, transparent) 82.52%);
+
+    &::before {
+      background: linear-gradient(180deg, rgba(153, 0, 30, 0) 0%, var(--color-background-button-primary-disabled) 100%);
+    }
+  }
+
+  &:active:not(:disabled){
+    background: linear-gradient(146.5deg, rgba(153, 0, 30, 0) 15.66%, color-mix(in srgb, var(--color-background-button-primary-hover) 20%, transparent) 82.52%);
+  }
+
+  &::disabled{
+    background: linear-gradient(146.5deg, var(--universal-white-alpha-50) 15.66%, var(--morning-fog-800) 82.52%);
+    
+    &::before{
+      background: linear-gradient(180deg, var(--universal-white-alpha-50) 0%, var(--morning-fog-800) 100%);
+    }
+  }
+}

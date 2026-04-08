@@ -1,0 +1,24 @@
+.dashedDivider{
+    height: 0px;
+    // width: 100%;
+    position: relative;
+    opacity: 1;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-image: repeating-linear-gradient(
+            to right,
+            var(--core-morning-fog-solids-morning-fog-700, #DFDFE2) 0px,
+            var(--core-morning-fog-solids-morning-fog-700, #DFDFE2) 6px,
+            transparent 6px,
+            transparent 12px
+        );
+        background-size: 12px 1px;
+        background-repeat: repeat-x;
+    }
+}

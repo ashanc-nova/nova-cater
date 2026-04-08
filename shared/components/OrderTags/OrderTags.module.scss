@@ -1,0 +1,229 @@
+.orderTagsWrapper {
+  display: inline-block;
+  position: relative;
+  border-radius: 999px;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.orderTags {
+  height: 28px;
+  width: fit-content;
+  border-radius: 999px;
+  padding-left: 6px;
+  padding-right: 12px;
+  gap: 4px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    height: 24px;
+  }
+}
+
+.orderTagIconContainer {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+  border: 0.27px solid rgba(0, 0, 0, 0.2);
+}
+
+.orderTagName {
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0.05px;
+  font-weight: 500;
+}
+
+// Completed and Delivered variants
+.completedWrapper,
+.deliveredWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(37, 186, 76, 0.1) 0%, #25ba4c 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.completed,
+.delivered {
+  background: linear-gradient(90deg, #ffffff 36.54%, #c3eccd 100%);
+
+  .orderTagName {
+    color: #25ba4c;
+  }
+}
+
+.completedIcon,
+.deliveredIcon {
+  background: #25ba4c;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+// Ready for pickup, Out of Delivery, Order Scheduled variants
+.ready-for-pickupWrapper,
+.out-of-deliveryWrapper,
+.order-scheduledWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(46, 129, 237, 0.1) 0%, #2e81ed 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.ready-for-pickup,
+.out-of-delivery,
+.order-scheduled {
+  background: linear-gradient(90deg, #ffffff 36.54%, #c9dbf1 100%);
+
+  .orderTagName {
+    color: #2e81ed;
+  }
+}
+
+.ready-for-pickupIcon,
+.out-of-deliveryIcon,
+.order-scheduledIcon {
+  background: #2e81ed;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+// Preparing your order, Order delayed variants
+.preparing-your-orderWrapper,
+.order-delayedWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(197, 98, 0, 0.1) 0%, #c56200 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.preparing-your-order,
+.order-delayed {
+  background: linear-gradient(90deg, #ffffff 36.54%, #ebd7c6 100%);
+
+  .orderTagName {
+    color: #c56200;
+  }
+}
+
+.preparing-your-orderIcon,
+.order-delayedIcon {
+  background: #c56200;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+// Order Declined variant
+.order-declinedWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(221, 48, 48, 0.1) 0%, #dd3030 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.order-declined {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 36.54%, rgba(221, 48, 48, 0.1) 100%);
+
+  .orderTagName {
+    color: #bb2626;
+  }
+}
+
+.order-declinedIcon {
+  background: #bb2626;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+// Awaiting confirmation variant
+.awaiting-for-confirmationWrapper {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(90deg, rgba(251, 191, 35, 0.1) 0%, rgba(251, 191, 35, 0.4) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.awaiting-for-confirmation {
+  background: linear-gradient(90deg, #ffffff 36.54%, #fef2d2 100%);
+
+  .orderTagName {
+    color: #c56200;
+  }
+}
+
+.awaiting-for-confirmationIcon {
+  background: #c56200;
+  border-color: rgba(0, 0, 0, 0.2);
+}

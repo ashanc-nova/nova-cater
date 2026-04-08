@@ -1,0 +1,88 @@
+// ProfileDropdown.module.scss
+.profileDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  margin-top: 8px;
+  background: #F8F8FB;
+  border: 3px solid #FFF;
+  border-radius: 16px;
+  width: 289px;
+  box-shadow: 1px 1px 2px 0 rgba(46, 46, 48, 0.04), 4px 4px 12px 0 rgba(46, 46, 48, 0.03);
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  
+  &:hover {
+    background-color: #f8f8fb;
+  }
+  
+  &:active {
+    background-color: #f0f0f3;
+  }
+}
+
+.menuItemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.05px;
+  color: #121214;
+  white-space: nowrap;
+}
+
+.divider {
+  height: 1px;
+  width: 249px;
+  background-color: #ECECEE;
+  margin: 16px 0;
+  border: none;
+}
+
+// Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .profileDropdown {
+    right: -8px;
+    min-width: 180px;
+    padding: 16px;
+  }
+  
+  .label {
+    font-size: 14px;
+  }
+}

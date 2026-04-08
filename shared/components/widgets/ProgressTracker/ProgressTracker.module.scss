@@ -1,0 +1,126 @@
+.gradientConnector {
+  background: linear-gradient(
+    90deg,
+    var(--color-type-brand) 0%,
+    color-mix(in srgb, var(--color-type-brand) 50%, transparent) 76.51%,
+    rgba(249, 249, 251, 0) 100%
+  );
+  border-radius: 999px;
+}
+
+.gradientConnectorVertical {
+  background: linear-gradient(
+    180deg,
+    var(--color-type-brand) 0%,
+    color-mix(in srgb, var(--color-type-brand) 50%, transparent) 76.51%,
+    rgba(249, 249, 251, 0) 100%
+  );
+  border-radius: 999px;
+}
+
+.inactiveConnector {
+  background: #e1e4f0;
+}
+
+.container {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+
+  @media (min-width: 768px) {
+    overflow-x: visible;
+  }
+}
+
+.desktopStepsContainer {
+  display: flex;
+  align-items: center;
+  min-width: fit-content;
+  
+  @media (max-width: 767px) {
+    min-width: 100%;
+  }
+}
+
+.desktopStep {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  min-width: 0; // Allow flex shrinking
+}
+
+.desktopConnectorBetween {
+  position: absolute;
+  left: calc(50% + 18px); // Start from right edge of icon (50% center + 18px half icon width)
+  top: 18px; // Align with center of icon (36px / 2 = 18px)
+  height: 1px;
+  right: calc(-50% + 18px); // Extend to left edge of next icon (negative 50% to go into next step + 18px to reach icon edge)
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.mobileStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 28px;
+  
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
+}
+
+.mobileIconContainer {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobileConnector {
+  position: absolute;
+  top: 36px; // Below the icon
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 40px;
+  border-radius: 999px;
+}
+
+.stepLabel {
+  flex: 1;
+  padding-top: 10px;
+  min-width: 0; // Allow text wrapping
+  
+  @media (min-width: 768px) {
+    text-align: center;
+    padding-top: 0;
+  }
+}
+
+.completeTick {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  z-index: 20;
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+

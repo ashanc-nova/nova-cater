@@ -1,0 +1,22 @@
+.countBadge {
+    display: flex;
+    width: 24px;
+    height: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: 
+    linear-gradient(146.5deg, rgba(255, 255, 255, 0) 15.66%, #ECECEE 82.52%) padding-box,
+    linear-gradient(300.5deg, rgba(255, 255, 255, 0) 15.66%, #FFFFFF 82.52%) padding-box, linear-gradient(180deg, #F8F8FB 0%, #DFDFE2 100%) border-box;
+}
+
+.countBadgeText {
+    color: #5D5D5E;
+    font-size: 8px;
+    font-weight: 500;
+    line-height: 12px;
+    letter-spacing: 0.05px;
+}

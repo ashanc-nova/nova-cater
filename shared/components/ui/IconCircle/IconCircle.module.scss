@@ -1,0 +1,29 @@
+.iconCircle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--core-spacing-1halfx, 6px);
+  aspect-ratio: 1/1;
+//   border: 1px solid #f8f8fb;
+  border-radius: var(--border-radius-border-radius-fully-rounded, 999px);
+  background: linear-gradient(147deg, rgba(255, 255, 255, 0.5) 15.66%, #ececee 82.52%);
+  transition: all 0.2s ease;
+}
+
+.clickable {
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand-500, #99001e);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,108 @@
+.mobileActiveWrapper {
+  border-radius: 999px;
+  padding: 1px;
+  background: linear-gradient(0deg, rgba(5, 8, 22, 0) 0%, rgba(248, 248, 251, 0.6) 100%);
+  display: flex;
+  flex: 1;
+  flex-shrink: 0;
+  align-items: center;
+  margin: 0;
+  box-sizing: border-box;
+  max-width: 100%;
+  height: 30px;
+}
+
+.mobileButton {
+  height: 30px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.05px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  flex-shrink: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.mobileActive {
+  height: 30px;
+  font-weight: 500;
+  color: #F8F8FB;
+  background: var(--color-type-brand);
+  box-shadow: 2px 2px 4px 0px rgba(30, 34, 56, 0.24) inset;
+  width: 100%;
+  min-width: 100%;
+}
+
+.mobileInactive {
+  font-weight: 400;
+  color: #121214;
+  background: transparent;
+  border: none;
+  flex: 1;
+  flex-shrink: 0;
+  margin: 0;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.desktopButton {
+  height: 38px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.05px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  flex-shrink: 0;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+    line-height: 21px;
+    letter-spacing: -0.05px;
+  }
+}
+
+.desktopActive {
+  font-weight: 500;
+  color: #F8F8FB;
+  background: var(--color-type-brand);
+  box-shadow: 2px 2px 4px 0px rgba(30, 34, 56, 0.24) inset;
+}
+
+.desktopActiveWrapper {
+  height: 38px;
+  border-radius: 999px;
+  padding: 1px;
+  background: linear-gradient(0deg, rgba(5, 8, 22, 0) 0%, rgba(248, 248, 251, 0.6) 100%);
+  display: flex;
+  flex: 1;
+  flex-shrink: 0;
+  align-items: center;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.desktopInactive {
+  font-weight: 400;
+  color: #121214;
+  background: transparent;
+  border: none;
+  flex: 1;
+}
+
+

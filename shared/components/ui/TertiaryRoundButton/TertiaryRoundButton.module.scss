@@ -1,0 +1,92 @@
+.tertiaryRoundButton {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(248, 248, 251, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  /* Gradient border via pseudo-element ring (clipping method) */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1.11px;
+    background: linear-gradient(180deg, var(--universal-white) 0%, var(--morning-fog-700) 100%);
+    -webkit-mask: linear-gradient(var(--universal-white) 0 0) content-box, linear-gradient(var(--universal-white) 0 0);
+    mask: linear-gradient(var(--universal-white) 0 0) content-box, linear-gradient(var(--universal-white) 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-background-button-primary-disabled) 10%, transparent);
+
+    &::before {
+      background: linear-gradient(180deg, rgba(153, 0, 30, 0) 0%, var(--color-background-button-primary-disabled) 100%);
+    }
+
+    svg path {
+      stroke: var(--color-background-button-primary-default);
+    }
+  }
+
+  &:active {
+    background: color-mix(in srgb, var(--color-background-button-primary-hover) 10%, transparent);
+
+    &::before {
+      background: linear-gradient(180deg, rgba(153, 0, 30, 0) 0%, var(--color-background-button-primary-hover) 100%);
+    }
+
+    svg path {
+      stroke: var(--color-background-button-primary-default);
+    }
+  }
+
+  svg {
+    position: relative;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+
+    path {
+      stroke: var(--type-primary);
+    }
+  }
+}
+
+.sizeSmall {
+  width: 32px;
+  height: 32px;  
+}
+
+.sizeMedium {
+  width: 36px;
+  height: 36px;
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.sizeLarge {
+  width: 40px;
+  height: 40px;
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.sizeXlarge {
+  width: 44px;
+  height: 44px;
+}

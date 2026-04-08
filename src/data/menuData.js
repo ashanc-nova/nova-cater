@@ -1,0 +1,42 @@
+export const categories = ['Steakburger Platters', 'Melt & Sandwich Trays', 'Shake Packages', 'Fries & Sides', 'Beverage Packages']
+
+export const menuItems = {
+  'Steakburger Platters': [
+    { name: 'Original Double Steakburger Platter', description: 'Hand-crafted double steakburger sliders with American cheese, lettuce, tomato, and pickle. Served on a party tray.', price: 49.99, serves: 10, unit: 'tray (20 pcs)', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop' },
+    { name: "Bacon 'n Cheese Double Platter", description: 'Double steakburger sliders topped with crispy bacon and melted American cheese. A crowd favorite.', price: 59.99, serves: 10, unit: 'tray (20 pcs)', image: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&h=300&fit=crop' },
+    { name: 'Frisco Melt Platter', description: 'Steakburger sliders with Swiss & American cheese on sourdough with Frisco sauce. Premium catering option.', price: 54.99, serves: 10, unit: 'tray (20 pcs)', image: 'https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&h=300&fit=crop' },
+    { name: 'Western BBQ Steakburger Platter', description: 'BBQ steakburger sliders with onion rings, bacon, and cheddar. Bold flavors for any event.', price: 64.99, serves: 15, unit: 'tray (30 pcs)', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&h=300&fit=crop' },
+    { name: 'Garlic Mushroom Steakburger Platter', description: 'Double patty sliders with garlic butter, sauteed mushrooms, and Swiss cheese on a party tray.', price: 59.99, serves: 10, unit: 'tray (20 pcs)', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&h=300&fit=crop' },
+    { name: 'Mini Steakburger Slider Box', description: 'Assorted mini steakburger sliders — original, bacon cheese, and frisco. Perfect for small gatherings.', price: 34.99, serves: 8, unit: 'box (16 pcs)', image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop' },
+    { name: 'Triple Steakburger Grand Platter', description: 'Triple-stacked steakburger sliders with all the fixings. The ultimate catering centerpiece.', price: 79.99, serves: 15, unit: 'tray (30 pcs)', image: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop' },
+  ],
+  'Melt & Sandwich Trays': [
+    { name: 'Patty Melt Tray', description: 'Steakburger patty melts on grilled rye with Swiss cheese and grilled onions. Cut into halves for easy serving.', price: 44.99, serves: 10, unit: 'tray (20 halves)', image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop' },
+    { name: 'Grilled Chicken Sandwich Tray', description: 'Seasoned grilled chicken breast sandwiches with lettuce, tomato, and mayo. Light and delicious.', price: 42.99, serves: 10, unit: 'tray (20 halves)', image: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=300&fit=crop' },
+    { name: 'Crispy Chicken Sandwich Tray', description: 'Buttermilk fried chicken sandwiches with pickles and spicy mayo. A crispy hit at any event.', price: 46.99, serves: 10, unit: 'tray (20 halves)', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=300&fit=crop' },
+    { name: 'Grilled Cheese Party Tray', description: 'Classic melted American cheese on buttery grilled sourdough. Cut into triangles. Kid-friendly!', price: 29.99, serves: 12, unit: 'tray (24 triangles)', image: 'https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=300&fit=crop' },
+    { name: 'Mixed Sandwich Platter', description: 'Assortment of patty melts, grilled chicken, and BLT sandwiches. Something for everyone.', price: 54.99, serves: 15, unit: 'tray (30 halves)', image: 'https://images.unsplash.com/photo-1619096252214-ef06c45683e3?w=400&h=300&fit=crop' },
+  ],
+  'Shake Packages': [
+    { name: 'Classic Vanilla Shake Pack', description: 'Hand-dipped vanilla milkshakes made with real ice cream. Individually cupped and ready to serve.', price: 39.99, serves: 10, unit: 'pack (10 cups)', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=300&fit=crop' },
+    { name: 'Classic Chocolate Shake Pack', description: 'Rich chocolate hand-dipped shakes. The all-time classic everyone loves.', price: 39.99, serves: 10, unit: 'pack (10 cups)', image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&h=300&fit=crop' },
+    { name: 'Strawberry Shake Pack', description: 'Fresh strawberry hand-dipped milkshakes with real fruit. Light, creamy, and refreshing.', price: 39.99, serves: 10, unit: 'pack (10 cups)', image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&h=300&fit=crop' },
+    { name: "Cookies 'n Cream Shake Pack", description: 'Crushed Oreo cookies blended into thick creamy shakes. A premium party favorite.', price: 44.99, serves: 10, unit: 'pack (10 cups)', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop' },
+    { name: 'Assorted Shake Party Pack', description: 'Mix of vanilla, chocolate, strawberry, and specialty shakes. The ultimate shake experience.', price: 59.99, serves: 15, unit: 'pack (15 cups)', image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400&h=300&fit=crop' },
+    { name: 'Mini Shake Sampler', description: 'Mini-sized shakes in 6 different flavors. Great for tastings and dessert tables.', price: 34.99, serves: 12, unit: 'pack (12 minis)', image: 'https://images.unsplash.com/photo-1624781546823-c4e25d0b7e5e?w=400&h=300&fit=crop' },
+  ],
+  'Fries & Sides': [
+    { name: "Thin 'n Crispy Fries Tray", description: 'Signature thin-cut fries, crispy and golden, lightly salted. Served in a large catering tray.', price: 19.99, serves: 10, unit: 'tray', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop' },
+    { name: 'Cheese Fries Party Tray', description: "Thin 'n crispy fries smothered in warm melted cheese sauce. A gooey crowd-pleaser.", price: 29.99, serves: 10, unit: 'tray', image: 'https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop' },
+    { name: 'Chili Cheese Fries Grand Tray', description: 'Fries loaded with hearty chili and topped with melted cheese sauce. Game-day essential.', price: 39.99, serves: 15, unit: 'tray', image: 'https://images.unsplash.com/photo-1631897249300-73a1d08a4052?w=400&h=300&fit=crop' },
+    { name: 'Onion Ring Tower', description: 'Golden beer-battered onion rings stacked high. Served with ranch and BBQ dipping sauces.', price: 24.99, serves: 10, unit: 'tray (60 pcs)', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=400&h=300&fit=crop' },
+    { name: 'Chili Bowls Catering Pack', description: "Hearty slow-simmered beef chili in individual bowls. The classic Steak 'n Shake recipe.", price: 34.99, serves: 10, unit: 'pack (10 bowls)', image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop' },
+  ],
+  'Beverage Packages': [
+    { name: 'Coca-Cola Beverage Package', description: 'Assorted Coca-Cola products — Coke, Diet Coke, Sprite. Canned and chilled, ready to serve.', price: 24.99, serves: 12, unit: 'case (24 cans)', image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop' },
+    { name: 'Iced Tea Dispenser', description: 'Crisp house-brewed iced tea in a self-serve dispenser. Includes cups, ice, and sweetener.', price: 19.99, serves: 15, unit: 'dispenser (2 gal)', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop' },
+    { name: 'Lemonade Dispenser', description: 'Sweet and tangy fresh-squeezed lemonade in a self-serve dispenser. Refreshing and classic.', price: 19.99, serves: 15, unit: 'dispenser (2 gal)', image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop' },
+    { name: 'Coffee Service', description: 'Freshly brewed hot coffee in airpots. Includes cups, lids, cream, sugar, and stirrers.', price: 29.99, serves: 20, unit: 'service (3 airpots)', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop' },
+    { name: 'Fresh OJ Dispenser', description: 'Pure fresh-squeezed orange juice in a chilled dispenser. Perfect for brunch catering.', price: 24.99, serves: 12, unit: 'dispenser (1.5 gal)', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=300&fit=crop' },
+  ],
+}

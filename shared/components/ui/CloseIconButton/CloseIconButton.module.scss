@@ -1,0 +1,21 @@
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #ececee;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  
+    &:hover {
+      background: #f8f8fb;
+      border-color: #d1d1d6;
+    }
+  
+    &:active {
+      transform: scale(0.95);
+    }
+  }

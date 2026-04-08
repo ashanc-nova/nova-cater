@@ -1,0 +1,129 @@
+.restaurantStatusTag {
+  height: fit-content;
+  border-radius: 999px;
+  padding: 6px 12px 6px 8px;
+  gap: 4px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  
+  // Gradient border using pseudo-element
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    background: linear-gradient(360deg, transparent 0%, transparent 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+}
+
+.restaurantStatusTagIconContainer {
+  width: 16px;
+  height: 16px;
+  border-radius: 1332px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff80;
+  position: relative;
+  z-index: 1;
+}
+
+.restaurantStatusTagText {
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0.25px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+// OPENING IN 15 MINS variant
+.opening-soon {
+  background: #fbbf231a;
+  
+  &::before {
+    background: linear-gradient(360deg, rgba(251, 191, 35, 0.2) 0%, rgba(251, 191, 35, 0) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+}
+
+.opening-soonText {
+  color: #c56200;
+}
+
+// OPEN NOW variant
+.open-now {
+  background: #25ba4c1a;
+  
+  &::before {
+    background: linear-gradient(360deg, rgba(37, 186, 76, 0.2) 0%, rgba(37, 186, 76, 0) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+}
+
+.open-nowText {
+  color: #187a32;
+}
+
+// CLOSING IN 8 MINS variant
+.closing-soon {
+  background: #f89f5f1a;
+  
+  &::before {
+    background: linear-gradient(360deg, rgba(197, 98, 0, 0.2) 0%, rgba(197, 98, 0, 0) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+}
+
+.closing-soonText {
+  color: #c56200;
+}
+
+// CLOSED variant
+.closed {
+  background: #dd30301a;
+  
+  &::before {
+    background: linear-gradient(360deg, rgba(221, 48, 48, 0.2) 0%, rgba(221, 48, 48, 0) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+  }
+}
+
+.closedText {
+  color: #941e1e;
+}

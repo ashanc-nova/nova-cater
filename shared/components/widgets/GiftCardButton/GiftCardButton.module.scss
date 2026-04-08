@@ -1,0 +1,83 @@
+.giftCardButton {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 6px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    cursor: pointer;
+    overflow: hidden;
+    background: var(--midnight-black-alpha-10);
+    box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.24);
+
+    @media (max-width: 768px) {
+        width: 36px;
+        height: 36px;
+        padding: 4px;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        pointer-events: none;
+
+        background: linear-gradient(0deg, var(--brand-alpha-00), var(--morning-fog-alpha-60));
+
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+}
+
+.giftCardIcon {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    border-radius: 1110px;
+
+    /* Figma: core/midnight-black/alpha/midnight-black-alpha-20 */
+    background: var(--midnight-black-alpha-20);
+
+    @media (max-width: 768px) {
+        width: 28px;
+        height: 28px;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1.11px;
+        /* border width */
+        pointer-events: none;
+
+        /* Figma inner border gradient */
+        background: linear-gradient(180deg, var(--midnight-black-alpha-00), var(--brand-500));
+
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+}
+
+@media (max-width: 768px) {
+    .giftCardIconContent svg {
+        width: 12px;
+        height: 12px;
+    }
+}

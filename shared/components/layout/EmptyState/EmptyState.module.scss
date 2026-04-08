@@ -1,0 +1,32 @@
+.emptyStateButton {
+  flex: 1;
+  height: 52px;
+  border-radius: 100px;
+  padding: 10px 32px;
+  color: var(--type-invert-primary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  // border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  border-radius: var(--border-radius-border-radius-fully-rounded, 999px);
+  border: 1px solid rgba(5, 8, 22, 0);
+  background: var(--color-background-button-primary-default);
+  box-shadow: 2px 2px 4px 0 rgba(30, 34, 56, 0.24) inset;
+
+  &:hover {
+    background: var(--color-background-button-primary-hover);
+  }
+
+  &:active {
+    background: var(--color-background-button-primary-active);
+  }
+
+  &:disabled {
+    background: var(--color-background-button-primary-disabled);
+    color: var(--type-invert-placeholder);
+    cursor: not-allowed;
+  }
+}

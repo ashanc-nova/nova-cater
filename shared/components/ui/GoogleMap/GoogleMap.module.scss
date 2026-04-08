@@ -1,0 +1,43 @@
+.mapContainer {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  @media (max-width: 768px) {
+    height: 206px;
+  }
+
+  > div {
+    border-radius: 8px;
+  }
+
+  // Hide Google Maps default fullscreen control
+  :global(.gm-fullscreen-control) {
+    display: none !important;
+  }
+
+  :global(button[title*="fullscreen" i]),
+  :global(button[aria-label*="fullscreen" i]) {
+    display: none !important;
+  }
+
+  // Hide Google Maps zoom controls
+  :global(.gm-zoom-control),
+  :global(.gm-style .gm-zoom-control) {
+    display: none !important;
+  }
+
+  :global(button[title*="zoom" i]),
+  :global(button[aria-label*="zoom" i]) {
+    display: none !important;
+  }
+
+  // Hide Google Maps control active elements
+  :global(.gm-control-active),
+  :global(.gm-style .gm-control-active),
+  :global(.gm-control),
+  :global(.gm-style .gm-control) {
+    display: none !important;
+  }
+}
+

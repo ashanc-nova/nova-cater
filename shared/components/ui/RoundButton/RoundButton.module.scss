@@ -1,0 +1,198 @@
+// Variables for maintainability
+$button-border-radius: 50%;
+$button-padding: 1px;
+$button-shadow: 0.5px 0.5px 2px 0px #1e22381f inset;
+$button-hover-shadow: 0px 4px 12px rgba(47, 88, 238, 0.3),
+  0px 2px 4px rgba(47, 88, 238, 0.2);
+$button-disabled-opacity: 0.5;
+
+// Size variables
+$button-size-20px: 20px;
+$button-size-24px: 24px;
+$button-size-26px: 26px;
+$button-size-28px: 28px;
+$button-size-small: 36px;
+$button-size-medium: 40px;
+$button-size-large: 44px;
+
+$button-size-24px: 24px;
+$button-size-32px: 32px;
+
+// Shared button styles
+%buttonBase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $button-border-radius;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+// Size classes
+.size20px {
+  width: $button-size-20px;
+  height: $button-size-20px;
+}
+
+.size24px {
+  width: $button-size-24px;
+  height: $button-size-24px;
+}
+
+.size26px {
+  width: $button-size-26px;
+  height: $button-size-26px;
+}
+
+.size28px {
+  width: $button-size-28px;
+  height: $button-size-28px;
+}
+
+.size24px {
+  width: $button-size-24px;
+  height: $button-size-24px;
+}
+
+.size32px {
+  width: $button-size-32px;
+  height: $button-size-32px;
+}
+
+.sizeSmall {
+  width: $button-size-small;
+  height: $button-size-small;
+}
+
+.sizeMedium {
+  width: $button-size-medium;
+  height: $button-size-medium;
+}
+
+.sizeLarge {
+  width: $button-size-large;
+  height: $button-size-large;
+}
+
+.roundButton {
+  @extend %buttonBase;
+  background: linear-gradient(360deg, color-mix(in srgb, var(--color-type-brand) 0.4%, transparent) 0%, color-mix(in srgb, var(--color-type-brand) 8%, transparent) 109.37%);
+  box-shadow: $button-shadow;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $button-border-radius;
+    padding: $button-padding;
+    background: linear-gradient(0deg, transparent 0%, color-mix(in srgb, var(--color-type-brand) 50%, transparent) 100%);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
+.roundButtonWhite {
+  @extend %buttonBase;
+  background: linear-gradient(146.5deg, rgba(255, 255, 255, 0) 15.66%, #ececee 82.52%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $button-border-radius;
+    padding: $button-padding;
+    background: linear-gradient(180deg, #f8f8fb 0%, #dfdfe2 100%);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
+.remainingPillLabel {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.05px;
+  color: #5d5d5e;
+}
+
+// Figma: +N counter pill — 26px, gradient fill, gradient border, type 3xs medium #5d5d5e
+.roundButtonRemainingPill {
+  @extend %buttonBase;
+  background: linear-gradient(146.5deg, rgba(255, 255, 255, 0) 15.66%, #ececee 82.52%);
+  box-shadow: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $button-border-radius;
+    padding: $button-padding;
+    background: linear-gradient(180deg, #f8f8fb 0%, #dfdfe2 100%);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
+.roundButtonSearchTrigger {
+  @extend %buttonBase;
+  border: 1px solid var(--color-border-iconButton-legacy-default, #ECECEE);
+  background: var(--color-background-iconButton-legacy-default, #FFF);
+  cursor: pointer;
+}
+
+// Figma back button: 32×32px, rounded-[888px], transparent bg, outline 1px inset morning-fog-alpha-20 (light translucent ring)
+$back-button-stroke: var(--core-morning-fog-alpha-morning-fog-alpha-20, rgba(248, 248, 251, 0.2));
+
+.roundButtonBack {
+  @extend %buttonBase;
+  width: $button-size-32px;
+  height: $button-size-32px;
+  padding: 0;
+  border-radius: 888px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px $back-button-stroke;
+  color: var(--alias-icon-system-icon-invert-primary, #f8f8fb);
+  cursor: pointer;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.disabled {
+  opacity: $button-disabled-opacity;
+  cursor: not-allowed;
+  pointer-events: none;
+}

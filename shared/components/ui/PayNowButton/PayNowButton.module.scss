@@ -1,0 +1,42 @@
+.payNowButton {
+  display: flex;
+  height: 36px;
+  padding: 10px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: var(--core-spacing-1halfx, 6px);
+  border-radius: var(--border-radius-border-radius-fully-rounded, 999px);
+  border: 1px solid rgba(5, 8, 22, 0);
+  background: var(--color-type-brand);
+  box-shadow: 2px 2px 4px 0 rgba(30, 34, 56, 0.24) inset;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  @media (min-width: 768px) {
+    height: 40px;
+    padding: 10px 24px 10px 16px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    color: rgba(248, 248, 251, 0.4);
+    cursor: not-allowed;
+  }
+
+  &.processingButton {
+    gap: 8px;
+    color: rgba(248, 248, 251, 0.4);
+    cursor: not-allowed;
+  }
+}
+

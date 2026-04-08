@@ -1,0 +1,48 @@
+// src/shared/components/QuantitySelector/QuantitySelector.module.scss
+.container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  &.sizeSM {
+    gap: 4px;
+  }
+}
+
+.quantity {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-background-button-primary-default);
+  text-align: center;
+  line-height: 30px;
+  &.sizeSM {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+// Size variants
+.sizeSM {
+  .quantity {
+    font-size: 12px;
+    min-width: 24px;
+  }
+}
+
+.sizeMD {
+  gap: 12px;
+}
+
+.sizeLG {
+  gap: 0;
+  .quantity {
+    font-size: 16px;
+    font-weight: 600;
+    min-width: 32px;
+    color: var(--color-type-brand);
+  }
+}

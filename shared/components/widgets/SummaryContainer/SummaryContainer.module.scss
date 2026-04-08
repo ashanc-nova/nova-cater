@@ -1,0 +1,4 @@
+.summaryContainer {
+    border: 1.75px solid var(--furniture-border-color-border-container, #FFF);
+    background: linear-gradient(180deg, var(--furniture-background-color-background-container-gradient-terminalTop, rgba(248, 248, 251, 0.60)) 0%, var(--furniture-background-color-background-container-gradient-terminalMiddle, rgba(255, 255, 255, 0.75)) 50%, var(--furniture-background-color-background-container-gradient-terminalBottom, #FFF) 100%);
+}

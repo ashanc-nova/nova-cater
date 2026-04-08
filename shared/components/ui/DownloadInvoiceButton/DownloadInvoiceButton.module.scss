@@ -1,0 +1,32 @@
+.downloadInvoiceButton {
+  position: relative;
+  align-items: center;
+  height: 40px;
+  padding: 10px 24px 10px 16px;
+  gap: 6px;
+  border-radius: 999px;
+  border: none;
+  color: var(--color-type-brand);
+  background: linear-gradient(146.5deg, rgba(255, 255, 255, 0.5) 15.66%, #ECECEE 82.52%);
+  isolation: isolate;
+  transition: box-shadow 0.2s ease, filter 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1px;
+    background: linear-gradient(180deg, #F8F8FB 0%, var(--color-type-brand) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
