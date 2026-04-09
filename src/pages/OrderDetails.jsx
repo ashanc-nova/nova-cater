@@ -4,6 +4,15 @@ import { useCart } from '../context/CartContext'
 
 const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
+const formatTimeLabel = (value) => {
+  if (!value) return 'Select time'
+  const [rawHour = '0', minute = '00'] = value.split(':')
+  const hour = Number(rawHour)
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const normalized = hour % 12 || 12
+  return `${normalized}:${minute} ${suffix}`
+}
+
 export default function OrderDetails() {
   const { cart, clearCart } = useCart()
   const navigate = useNavigate()
@@ -13,7 +22,10 @@ export default function OrderDetails() {
   const [eventTime, setEventTime] = useState('')
   const [serviceType, setServiceType] = useState('delivery')
   const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [deliveryInstructions, setDeliveryInstructions] = useState('')
   const [guestCount, setGuestCount] = useState('')
+  const [customerName, setCustomerName] = useState('')
+  const [customerEmail, setCustomerEmail] = useState('')
   const [specialRequirements, setSpecialRequirements] = useState('')
   const [paymentOption, setPaymentOption] = useState('pay-later')
   const [depositAmount, setDepositAmount] = useState(0)
@@ -25,25 +37,53 @@ export default function OrderDetails() {
     const saved = JSON.parse(localStorage.getItem('snsAppEventDetails') || '{}')
     setEventName(saved.eventName || '')
     if (saved.eventDateTime) {
-      const [d, t] = saved.eventDateTime.split('T')
-      setEventDate(d || '')
-      setEventTime(t || '')
+      const [savedDate, savedTime] = saved.eventDateTime.split('T')
+      setEventDate(savedDate || '')
+      setEventTime(savedTime || '')
     }
     const savedService = saved.serviceType && saved.serviceType !== 'dineIn' ? saved.serviceType : 'delivery'
     setServiceType(savedService)
     setDeliveryAddress(saved.deliveryAddress || '')
+    setDeliveryInstructions(saved.deliveryInstructions || '')
     setGuestCount(saved.guestCount || '')
+    setCustomerName(saved.customerName || '')
+    setCustomerEmail(saved.customerEmail || '')
     setSpecialRequirements(saved.specialRequirements || '')
   }, [])
 
   const cartSubtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
   const tax = cartSubtotal * 0.1
-  const deliveryFee = serviceType === 'delivery' ? 10 : 0
-  const total = cartSubtotal + tax + deliveryFee
+  const serviceFee = cartSubtotal * 0.06
+  const total = cartSubtotal + tax + serviceFee
+  const suggestedDeposits = [0.25, 0.5, 0.75].map(multiplier => Number((total * multiplier).toFixed(2)))
+
+  useEffect(() => {
+    if (paymentOption === 'pay-deposit') {
+      const defaultDeposit = Number((total * 0.25).toFixed(2))
+      setDepositAmount(current => {
+        if (!current || current > total) return defaultDeposit
+        return current
+      })
+    }
+  }, [paymentOption, total])
+
+  const paymentHint = paymentOption === 'pay-later'
+    ? 'You can confirm this order now and pay at the restaurant when the catering order is fulfilled.'
+    : paymentOption === 'pay-deposit'
+      ? 'Pay part of the order now to lock it in, then settle the remaining balance later.'
+      : 'You will pay the full order total now so nothing is left due at pickup or delivery.'
 
   const saveEventDetails = () => {
     localStorage.setItem('snsAppEventDetails', JSON.stringify({
-      eventName, eventDateTime, serviceType, deliveryAddress, guestCount, specialRequirements
+      eventName,
+      eventDateTime,
+      serviceType,
+      deliveryAddress,
+      deliveryInstructions,
+      guestCount,
+      customerName,
+      customerEmail,
+      specialRequirements,
     }))
   }
 
@@ -53,20 +93,31 @@ export default function OrderDetails() {
   }
 
   const placeOrder = () => {
-    const orderId = 'order_' + Date.now()
+    const orderId = `order_${Date.now()}`
     const orderDetails = {
       id: orderId,
       eventName: eventName || 'Unnamed Event',
       eventDate: eventDateTime || 'Date not specified',
-      serviceType, deliveryAddress, guestCount, specialRequirements,
-      cart, subtotal: cartSubtotal, tax, deliveryFee, total,
-      paymentOption, depositAmount,
+      serviceType,
+      deliveryAddress,
+      deliveryInstructions,
+      guestCount,
+      customerName,
+      customerEmail,
+      specialRequirements,
+      cart,
+      subtotal: cartSubtotal,
+      tax,
+      serviceFee,
+      total,
+      paymentOption,
+      depositAmount: paymentOption === 'pay-deposit' ? depositAmount : paymentOption === 'pay-full' ? total : 0,
       status: 'Confirmed',
-      paymentStatus: paymentOption === 'pay-later' ? 'Unpaid' : 'Paid',
-      placedDate: new Date().toISOString()
+      paymentStatus: paymentOption === 'pay-later' ? 'Unpaid' : paymentOption === 'pay-deposit' ? 'Partially Paid' : 'Paid',
+      placedDate: new Date().toISOString(),
     }
 
-    let orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
+    const orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
     orders.unshift(orderDetails)
     localStorage.setItem('snsAppOrders', JSON.stringify(orders))
 
@@ -77,194 +128,275 @@ export default function OrderDetails() {
 
   return (
     <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
-      {/* Page Header */}
-      <div className="mb-10 animate-slide-up">
-        <div className="inline-flex items-center gap-2 badge-glass text-primary-300 mb-4">
+      <div className="mb-8 animate-slide-up">
+        <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors mb-4">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div className="inline-flex items-center gap-2 badge-glass text-primary-300">
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
           Order Details
         </div>
-        <h1 className="font-display font-extrabold text-3xl md:text-4xl th-heading">Finalize Your Order</h1>
-        <p className="th-faint mt-2">Fill in your event details and review your order</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Form Section */}
-        <div className="w-full lg:w-2/3 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="glass-strong rounded-3xl p-8">
-            <h2 className="font-display font-bold text-xl th-heading mb-6 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-primary-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
-              Event Details
-            </h2>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block th-muted text-sm font-medium mb-2" htmlFor="eventName">Event Name</label>
-                <input className="glass-input w-full py-3 px-4 rounded-2xl text-sm" id="eventName" type="text" placeholder="e.g., Annual Team Dinner" value={eventName} onChange={e => setEventName(e.target.value)}/>
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,0.95fr)] gap-8 items-stretch">
+        <section className="glass-strong rounded-[32px] p-6 md:p-7 animate-slide-up h-full" style={{ animationDelay: '0.05s' }}>
+          <div className="space-y-6">
+            <div className="glass rounded-[28px] p-6">
+              <div className="mb-5">
+                <h2 className="text-[28px] font-bold tracking-tight th-heading">Event details</h2>
+                <p className="th-muted text-sm mt-1">Time needed to prepare an order before it is ready for pickup or delivery</p>
               </div>
 
-              <div>
-                <label className="block th-muted text-sm font-medium mb-3">Event Date &amp; Time</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                      <div className="w-9 h-9 rounded-xl bg-primary-500/15 flex items-center justify-center group-focus-within:bg-primary-500/25 transition-colors">
-                        <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                      </div>
-                    </div>
-                    <input
-                      id="eventDate"
-                      type="date"
-                      value={eventDate}
-                      onChange={e => setEventDate(e.target.value)}
-                      className="glass-input w-full pl-16 pr-4 py-4 rounded-2xl text-sm font-medium th-heading focus:ring-2 focus:ring-primary-500/40 transition-all"
-                    />
-                    <span className="absolute -top-2 left-14 px-2 text-[10px] font-semibold uppercase tracking-wider th-faint bg-[var(--surface-bg,transparent)]">Date</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Event name</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={eventName} onChange={e => setEventName(e.target.value)} placeholder="Grab your loyalty rewards!" />
+                </label>
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Party size</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={guestCount} onChange={e => setGuestCount(e.target.value)} placeholder="20" />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {[
+                  {
+                    value: 'delivery',
+                    label: 'Delivery',
+                    icon: (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.106-1.789l5-2.5a2 2 0 011.788 0l5 2.5A2 2 0 0117 8.618v6.764a2 2 0 01-1.106 1.79L10 20m0 0l5-2.5M10 20V10"/></svg>
+                    ),
+                  },
+                  {
+                    value: 'pickup',
+                    label: 'Pickup',
+                    icon: (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ),
+                  },
+                ].map(option => {
+                  const active = serviceType === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setServiceType(option.value)}
+                      className={`rounded-[26px] border p-6 text-left transition-all ${active ? 'bg-primary-700 text-white border-primary-700 shadow-[0_12px_30px_rgba(199,33,41,0.25)]' : 'bg-black/[0.02] dark:bg-white/[0.03] border-black/8 dark:border-white/8 th-muted hover:border-primary-300/30'}`}
+                    >
+                      <div className={`mb-5 ${active ? 'text-white' : 'text-primary-400'}`}>{option.icon}</div>
+                      <div className={`text-[18px] font-semibold ${active ? 'text-white' : 'th-heading'}`}>{option.label}</div>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Date</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} />
+                </label>
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Time</span>
+                  <div className="glass-input rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3">
+                    <input className="bg-transparent flex-1 text-sm outline-none" type="time" value={eventTime} onChange={e => setEventTime(e.target.value)} />
+                    <span className="text-xs font-semibold th-faint whitespace-nowrap">{formatTimeLabel(eventTime)}</span>
                   </div>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                      <div className="w-9 h-9 rounded-xl bg-primary-500/15 flex items-center justify-center group-focus-within:bg-primary-500/25 transition-colors">
-                        <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </div>
-                    </div>
-                    <input
-                      id="eventTime"
-                      type="time"
-                      value={eventTime}
-                      onChange={e => setEventTime(e.target.value)}
-                      className="glass-input w-full pl-16 pr-4 py-4 rounded-2xl text-sm font-medium th-heading focus:ring-2 focus:ring-primary-500/40 transition-all"
-                    />
-                    <span className="absolute -top-2 left-14 px-2 text-[10px] font-semibold uppercase tracking-wider th-faint bg-[var(--surface-bg,transparent)]">Time</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block th-muted text-sm font-medium mb-3">Service Type</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: 'delivery', label: 'Delivery', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/> },
-                    { value: 'pickup', label: 'Pickup', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/> },
-                  ].map(opt => (
-                    <label key={opt.value} className="cursor-pointer">
-                      <input type="radio" name="serviceType" value={opt.value} checked={serviceType === opt.value} onChange={e => setServiceType(e.target.value)} className="hidden peer"/>
-                      <div className="glass rounded-2xl p-4 text-center transition-all duration-300 peer-checked:bg-primary-500/20 peer-checked:border-primary-500/40 border border-transparent hover:bg-black/5 dark:hover:bg-white/5">
-                        <svg className="w-6 h-6 mx-auto mb-2 th-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">{opt.icon}</svg>
-                        <span className="text-xs font-semibold th-muted">{opt.label}</span>
-                      </div>
-                    </label>
-                  ))}
-                </div>
+                </label>
               </div>
 
               {serviceType === 'delivery' && (
-                <div>
-                  <label className="block th-muted text-sm font-medium mb-2" htmlFor="deliveryAddress">Delivery Address</label>
-                  <input className="glass-input w-full py-3 px-4 rounded-2xl text-sm" id="deliveryAddress" type="text" placeholder="Enter delivery address" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)}/>
-                </div>
+                <>
+                  <label className="block mb-4">
+                    <span className="block text-sm th-muted mb-2">Delivery address</span>
+                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} placeholder="San Ramon, 100 Becker St, CA" />
+                  </label>
+                  <label className="block mb-4">
+                    <span className="block text-sm th-muted mb-2">Delivery instructions</span>
+                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryInstructions} onChange={e => setDeliveryInstructions(e.target.value)} placeholder="Please leave it next to the door" />
+                  </label>
+                </>
               )}
 
-              <div>
-                <label className="block th-muted text-sm font-medium mb-2" htmlFor="guestCount">Number of Guests</label>
-                <input className="glass-input w-full py-3 px-4 rounded-2xl text-sm" id="guestCount" type="number" placeholder="How many guests?" value={guestCount} onChange={e => setGuestCount(e.target.value)}/>
-              </div>
+              <label className="block">
+                <span className="block text-sm th-muted mb-2">Special requirements</span>
+                <textarea className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm resize-none" rows="3" value={specialRequirements} onChange={e => setSpecialRequirements(e.target.value)} placeholder="Dietary notes, setup requests, or anything the team should know" />
+              </label>
+            </div>
 
-              <div>
-                <label className="block th-muted text-sm font-medium mb-2" htmlFor="specialRequirements">Special Requirements</label>
-                <textarea className="glass-input w-full py-3 px-4 rounded-2xl text-sm resize-none" id="specialRequirements" rows="3" placeholder="Allergies, dietary needs, setup preferences..." value={specialRequirements} onChange={e => setSpecialRequirements(e.target.value)}/>
+            <div className="glass rounded-[28px] p-6">
+              <div className="mb-5">
+                <h2 className="text-[28px] font-bold tracking-tight th-heading">Customer details</h2>
+                <p className="th-muted text-sm mt-1">We’ll use this to share order updates and coordinate the handoff</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Name</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Alex Carter" />
+                </label>
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Email</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} placeholder="alex@company.com" />
+                </label>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Order Review Sidebar */}
-        <div className="w-full lg:w-1/3 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="lg:sticky lg:top-28">
-            <div className="glass-strong rounded-3xl p-6">
-              <h2 className="font-display font-bold text-xl th-heading mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-primary-500/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                </div>
-                Review Order
-              </h2>
+            <div className="glass rounded-[28px] p-6">
+              <div className="mb-5">
+                <h2 className="text-[28px] font-bold tracking-tight th-heading">Payment type</h2>
+                <p className="th-muted text-sm mt-1">Choose how you want to settle this catering order</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { value: 'pay-later', label: 'Pay Later' },
+                  { value: 'pay-deposit', label: 'Paid Deposit' },
+                  { value: 'pay-full', label: 'Full Payment' },
+                ].map(option => {
+                  const active = paymentOption === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setPaymentOption(option.value)}
+                      className={`px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${active ? 'bg-primary-500/12 border-primary-400 text-primary-400' : 'border-black/10 dark:border-white/10 th-muted hover:border-primary-300/30'}`}
+                    >
+                      {option.label}
+                    </button>
+                  )
+                })}
+              </div>
 
-              {/* Cart Items */}
-              <div className="space-y-3 mb-6">
-                {cart.map((item, index) => (
-                  <div key={index} className="flex justify-between items-center py-2">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold th-heading text-sm truncate">{item.name}</h3>
-                      <p className="text-xs th-faint">Qty: {item.quantity} x {item.unit} &middot; Serves {item.serves * item.quantity}</p>
+              <div className="mt-4 rounded-2xl border border-black/8 dark:border-white/8 bg-black/[0.02] dark:bg-white/[0.03] px-4 py-3">
+                <p className="text-sm th-muted">{paymentHint}</p>
+              </div>
+
+              {paymentOption === 'pay-deposit' && (
+                <div className="mt-4 rounded-2xl border border-primary-300/20 bg-primary-500/5 px-4 py-4">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                      <p className="text-sm font-semibold th-heading">Deposit amount</p>
+                      <p className="text-sm th-muted">Choose how much you want to pay now.</p>
                     </div>
-                    <span className="text-sm font-bold th-heading ml-3">{formatCurrency(item.price * item.quantity)}</span>
+                    <div className="text-right">
+                      <p className="text-xs uppercase tracking-wide th-faint">Pay now</p>
+                      <p className="text-lg font-semibold text-primary-400">{formatCurrency(Math.min(depositAmount || 0, total))}</p>
+                    </div>
                   </div>
-                ))}
-              </div>
 
-              {/* Totals */}
-              <div className="border-t border-black/5 dark:border-white/5 pt-4 space-y-2 mb-6">
-                <div className="flex justify-between text-sm">
-                  <span className="th-faint">Subtotal</span>
-                  <span className="th-heading font-medium">{formatCurrency(cartSubtotal)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="th-faint">Tax (10%)</span>
-                  <span className="th-heading font-medium">{formatCurrency(tax)}</span>
-                </div>
-                {serviceType === 'delivery' && (
-                  <div className="flex justify-between text-sm">
-                    <span className="th-faint">Delivery Fee</span>
-                    <span className="th-heading font-medium">{formatCurrency(deliveryFee)}</span>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {suggestedDeposits.map(amount => (
+                      <button
+                        key={amount}
+                        onClick={() => setDepositAmount(amount)}
+                        className={`px-3 py-2 rounded-xl border text-sm font-medium transition-all ${depositAmount === amount ? 'bg-primary-500/15 border-primary-400 text-primary-400' : 'border-black/10 dark:border-white/10 th-muted hover:border-primary-300/30'}`}
+                      >
+                        {formatCurrency(amount)}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setDepositAmount(Number(total.toFixed(2)))}
+                      className={`px-3 py-2 rounded-xl border text-sm font-medium transition-all ${depositAmount === Number(total.toFixed(2)) ? 'bg-primary-500/15 border-primary-400 text-primary-400' : 'border-black/10 dark:border-white/10 th-muted hover:border-primary-300/30'}`}
+                    >
+                      Full total
+                    </button>
                   </div>
-                )}
-                <div className="border-t border-black/5 dark:border-white/5 pt-3 flex justify-between">
-                  <span className="font-bold th-heading">Total</span>
-                  <span className="text-xl font-bold gradient-text">{formatCurrency(total)}</span>
+
+                  <label className="block">
+                    <span className="block text-sm th-muted mb-2">Custom deposit</span>
+                    <input
+                      className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm"
+                      type="number"
+                      min="0"
+                      max={total.toFixed(2)}
+                      step="0.01"
+                      value={depositAmount}
+                      onChange={e => setDepositAmount(Math.min(Number(e.target.value || 0), Number(total.toFixed(2))))}
+                    />
+                  </label>
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
+        </section>
 
-              {/* Edit Order */}
-              <button onClick={editOrder} className="w-full btn-ghost text-sm py-2.5 mb-4 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                Edit Order
-              </button>
+        <aside className="animate-slide-up h-full" style={{ animationDelay: '0.1s' }}>
+          <div className="xl:sticky xl:top-28 h-full">
+            <div className="glass-strong rounded-[32px] p-5 h-full flex flex-col">
+              <div className="glass rounded-[28px] p-5 mb-5">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center">
+                    <svg className="w-5 h-5 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  </div>
+                  <h2 className="text-[28px] font-bold tracking-tight th-heading">Items</h2>
+                </div>
 
-              {/* Payment Options */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold th-muted mb-3">Payment Option</h3>
-                <div className="space-y-2">
-                  {[
-                    { value: 'pay-later', label: 'Pay Later', desc: 'Pay at the restaurant' },
-                    { value: 'pay-deposit', label: 'Pay Deposit', desc: 'Partial payment now' },
-                    { value: 'pay-full', label: 'Pay Full', desc: 'Complete payment now' },
-                  ].map(opt => (
-                    <label key={opt.value} className="flex items-center gap-3 glass rounded-xl p-3 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all">
-                      <input type="radio" name="payment-option" value={opt.value} checked={paymentOption === opt.value} onChange={e => setPaymentOption(e.target.value)} className="text-primary-500"/>
-                      <div>
-                        <span className="text-sm font-medium th-heading">{opt.label}</span>
-                        <p className="text-xs th-ghost">{opt.desc}</p>
+                <div className="space-y-5">
+                  {cart.map((item, index) => (
+                    <div key={index} className="pb-5 border-b border-black/6 dark:border-white/6 last:border-b-0 last:pb-0">
+                      <div className="flex items-start gap-4">
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-[18px] font-semibold th-heading leading-snug">{item.quantity} × {item.name}</p>
+                              <p className="th-muted text-sm mt-1">{item.unit}{item.selectedModifiers?.length ? `, ${item.selectedModifiers.join(', ')}` : ''}</p>
+                            </div>
+                            <span className="text-lg font-semibold th-heading whitespace-nowrap">{formatCurrency(item.price * item.quantity)}</span>
+                          </div>
+                        </div>
                       </div>
-                    </label>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              {/* Deposit Input */}
-              {paymentOption === 'pay-deposit' && (
-                <div className="mb-6">
-                  <label className="block th-muted text-sm font-medium mb-2">Deposit Amount</label>
-                  <input className="glass-input w-full py-3 px-4 rounded-2xl text-sm" type="number" placeholder="Enter deposit amount" value={depositAmount} onChange={e => setDepositAmount(Number(e.target.value))}/>
-                </div>
-              )}
-
-              {/* Place Order Button */}
-              <button onClick={placeOrder} className="w-full btn-primary text-base py-3.5 flex items-center justify-center gap-2">
-                {paymentOption === 'pay-later' ? 'Confirm Order' : 'Pay & Confirm'}
+              <button onClick={editOrder} className="glass rounded-[28px] p-5 w-full flex items-center justify-between mb-5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="w-12 h-12 rounded-full bg-primary-500/15 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-semibold th-heading">Edit order</p>
+                      <p className="th-muted text-sm">Go back and adjust menu items</p>
+                    </div>
+                  </div>
+                <svg className="w-5 h-5 th-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
               </button>
+
+              <div className="mt-auto">
+                <div className="glass rounded-[28px] p-5">
+                <div className="space-y-3 pb-5 border-b border-dashed border-black/10 dark:border-white/10">
+                  <div className="flex items-center justify-between text-base">
+                    <span className="th-muted">Subtotal</span>
+                    <span className="th-heading font-medium">{formatCurrency(cartSubtotal)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-base">
+                    <span className="th-muted">Tax</span>
+                    <span className="th-heading font-medium">{formatCurrency(tax)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-base">
+                    <span className="th-muted">Service fee</span>
+                    <span className="th-heading font-medium">{formatCurrency(serviceFee)}</span>
+                  </div>
+                  {paymentOption === 'pay-deposit' && (
+                    <div className="flex items-center justify-between text-base">
+                      <span className="th-muted">Deposit due now</span>
+                      <span className="th-heading font-medium">{formatCurrency(Math.min(depositAmount || 0, total))}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between pt-5">
+                  <span className="text-[28px] font-bold tracking-tight th-heading">Total</span>
+                  <span className="text-[30px] font-bold tracking-tight gradient-text">{formatCurrency(total)}</span>
+                </div>
+              </div>
+
+                <button onClick={placeOrder} className="w-full btn-primary text-base py-4 mt-5 flex items-center justify-center gap-3 rounded-[28px]">
+                  {paymentOption === 'pay-later' ? 'Confirm Order' : paymentOption === 'pay-deposit' ? `Pay ${formatCurrency(Math.min(depositAmount || 0, total))} & Confirm` : 'Pay & Confirm'}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </main>
   )

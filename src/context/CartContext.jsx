@@ -14,9 +14,10 @@ export function CartProvider({ children }) {
 
   const addToCart = (item) => {
     setCart(prev => {
-      const existing = prev.find(c => c.name === item.name)
+      const itemKey = item.cartKey || item.name
+      const existing = prev.find(c => (c.cartKey || c.name) === itemKey)
       if (existing) {
-        return prev.map(c => c.name === item.name ? { ...c, quantity: c.quantity + 1 } : c)
+        return prev.map(c => (c.cartKey || c.name) === itemKey ? { ...c, quantity: c.quantity + 1 } : c)
       }
       return [...prev, { ...item, quantity: 1 }]
     })
@@ -39,13 +40,28 @@ export function CartProvider({ children }) {
     })
   }
 
-  const isInCart = (item) => cart.some(c => c.name === item.name)
+  const isInCart = (item) => {
+    if (item.cartKey) {
+      return cart.some(c => (c.cartKey || c.name) === item.cartKey)
+    }
+    return cart.some(c => c.name === item.name)
+  }
 
-  const getCartItemIndex = (item) => cart.findIndex(c => c.name === item.name)
+  const getCartItemIndex = (item) => {
+    if (item.cartKey) {
+      return cart.findIndex(c => (c.cartKey || c.name) === item.cartKey)
+    }
+    return cart.findIndex(c => c.name === item.name)
+  }
 
   const getCartItemQuantity = (item) => {
-    const found = cart.find(c => c.name === item.name)
-    return found ? found.quantity : 0
+    if (item.cartKey) {
+      const found = cart.find(c => (c.cartKey || c.name) === item.cartKey)
+      return found ? found.quantity : 0
+    }
+    return cart
+      .filter(c => c.name === item.name)
+      .reduce((sum, cartItem) => sum + cartItem.quantity, 0)
   }
 
   const cartTotal = useMemo(() => {

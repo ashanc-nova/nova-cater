@@ -26,13 +26,17 @@ export default function Cart() {
       >
         {/* Collapsed tab */}
         <div className={`transition-all duration-300 ease-in-out ${hovered ? 'opacity-0 pointer-events-none translate-x-2' : 'opacity-100 translate-x-0'}`}>
-          <div className="bg-gradient-to-b from-primary-500 to-primary-700 text-white rounded-l-2xl px-3 py-5 cursor-pointer shadow-glow flex flex-col items-center gap-3">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            <span className="text-xs font-bold">{totalItems}</span>
-            <div className="w-5 border-t border-white/30"></div>
-            <span className="text-[11px] font-semibold">${cartTotal.toFixed(0)}</span>
+          <div className="bg-gradient-to-b from-primary-500 to-primary-700 text-white rounded-l-[28px] w-[74px] py-5 cursor-pointer shadow-glow flex flex-col items-center gap-3">
+            <div className="relative w-10 h-10 rounded-full border border-white/20 bg-black/10 flex items-center justify-center">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full border border-white bg-primary-700 text-[10px] font-bold leading-none flex items-center justify-center shadow-sm">
+                {totalItems}
+              </span>
+            </div>
+            <div className="w-11 border-t border-white/70"></div>
+            <span className="text-[12px] font-semibold">${cartTotal.toFixed(2)}</span>
           </div>
         </div>
 
