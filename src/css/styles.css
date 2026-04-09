@@ -70,7 +70,7 @@
   --orb-opacity: 0.06;
 
   /* Gradient text */
-  --gradient-text: linear-gradient(135deg, #E5383B 0%, #C72129 50%, #B01D24 100%);
+  --gradient-text: linear-gradient(135deg, #C72129 0%, #C72129 100%);
 }
 
 .dark {
@@ -137,7 +137,7 @@
   --orb-opacity: 0.15;
 
   /* Gradient text */
-  --gradient-text: linear-gradient(135deg, #FF6B7A 0%, #C72129 50%, #FF4757 100%);
+  --gradient-text: linear-gradient(135deg, #C72129 0%, #C72129 100%);
 }
 
 /* ========== Base Styles ========== */
@@ -268,7 +268,7 @@
 
   /* Modern Button - Primary */
   .btn-primary {
-    background: linear-gradient(135deg, #C72129 0%, #E5383B 100%);
+    background: linear-gradient(135deg, #C72129 0%, #C72129 100%);
     color: white;
     font-weight: 600;
     border-radius: 1rem;
@@ -358,7 +358,7 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(199, 33, 41, 0.5), rgba(255, 107, 122, 0.3), rgba(199, 33, 41, 0.1));
+    background: linear-gradient(135deg, rgba(199, 33, 41, 0.5), rgba(199, 33, 41, 0.3), rgba(199, 33, 41, 0.1));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -435,7 +435,7 @@
 }
 
 .orb-secondary {
-  background: radial-gradient(circle, #FF6B7A, transparent 70%);
+  background: radial-gradient(circle, #C72129, transparent 70%);
 }
 
 /* ========== Animations for Page Loads ========== */

@@ -100,7 +100,7 @@ export default function OrderSummary() {
   const paymentTone = isFullyPaid
     ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
     : order.paymentStatus === 'Partially Paid'
-      ? 'bg-amber-500/15 text-amber-500 border-amber-500/30'
+      ? 'bg-primary-500/15 text-primary-500 border-primary-500/30'
       : 'bg-rose-500/15 text-rose-500 border-rose-500/30'
 
   const statusTone = order.status === 'Confirmed'
