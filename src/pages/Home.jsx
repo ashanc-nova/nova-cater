@@ -324,7 +324,7 @@ export default function Home() {
 
             {/* COMPACT GRID LAYOUT (3 col) */}
             {menuLayout === 'compact' && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {currentItems.map((item, index) => (
                   <div key={`compact-${index}`} className="glass rounded-2xl overflow-hidden hover-card group">
                     <div className="relative">

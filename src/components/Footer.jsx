@@ -18,7 +18,7 @@ export default function Footer() {
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                   </svg>
                 </div>
-                <span className="font-display font-bold text-xl th-heading">Steak 'n Shake</span>
+                <span className="font-display font-bold text-xl th-heading">SNS</span>
               </div>
               <p className="th-faint leading-relaxed">Famous for steakburgers and hand-dipped milkshakes since 1934. The original better burger.</p>
             </div>
@@ -47,7 +47,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-3">
                   <svg className="w-4 h-4 text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                  <span className="th-faint text-sm">info@steaknshake.com</span>
+                  <span className="th-faint text-sm">info@sns.com</span>
                 </div>
               </div>
             </div>
@@ -56,7 +56,7 @@ export default function Footer() {
           {/* Bottom Bar */}
           <div className="border-t border-black/5 dark:border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="th-ghost text-xs">&copy; 2024 Steak 'n Shake. All rights reserved.</span>
+              <span className="th-ghost text-xs">&copy; 2024 SNS. All rights reserved.</span>
             </div>
             <div className="flex items-center gap-6">
               <a href="#" className="th-ghost hover:th-muted text-xs transition-colors">Privacy</a>

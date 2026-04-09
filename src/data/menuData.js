@@ -30,7 +30,7 @@ export const menuItems = {
     { name: 'Cheese Fries Party Tray', description: "Thin 'n crispy fries smothered in warm melted cheese sauce. A gooey crowd-pleaser.", price: 29.99, serves: 10, unit: 'tray', image: 'https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop' },
     { name: 'Chili Cheese Fries Grand Tray', description: 'Fries loaded with hearty chili and topped with melted cheese sauce. Game-day essential.', price: 39.99, serves: 15, unit: 'tray', image: 'https://images.unsplash.com/photo-1631897249300-73a1d08a4052?w=400&h=300&fit=crop' },
     { name: 'Onion Ring Tower', description: 'Golden beer-battered onion rings stacked high. Served with ranch and BBQ dipping sauces.', price: 24.99, serves: 10, unit: 'tray (60 pcs)', image: 'https://images.unsplash.com/photo-1639024471283-03518883512d?w=400&h=300&fit=crop' },
-    { name: 'Chili Bowls Catering Pack', description: "Hearty slow-simmered beef chili in individual bowls. The classic Steak 'n Shake recipe.", price: 34.99, serves: 10, unit: 'pack (10 bowls)', image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop' },
+    { name: 'Chili Bowls Catering Pack', description: "Hearty slow-simmered beef chili in individual bowls. The classic SNS recipe.", price: 34.99, serves: 10, unit: 'pack (10 bowls)', image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop' },
   ],
   'Beverage Packages': [
     { name: 'Coca-Cola Beverage Package', description: 'Assorted Coca-Cola products — Coke, Diet Coke, Sprite. Canned and chilled, ready to serve.', price: 24.99, serves: 12, unit: 'case (24 cans)', image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop' },
