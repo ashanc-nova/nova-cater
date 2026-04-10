@@ -63,7 +63,7 @@ export default function HeaderLocationPopover({ open, onClose, anchorRef, onView
   return (
     <div
       ref={popoverRef}
-      className="absolute left-0 top-[calc(100%+12px)] z-[85] w-[360px] rounded-[24px] border border-black/8 dark:border-white/10 shadow-2xl overflow-hidden bg-white dark:bg-slate-950"
+      className="absolute left-0 top-[calc(100%+12px)] z-[85] w-[min(360px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-[24px] border border-black/8 dark:border-white/10 shadow-2xl overflow-hidden bg-white dark:bg-slate-950"
     >
       <div className="p-4 border-b border-black/8 dark:border-white/10">
         <div className="h-11 glass-input rounded-xl border border-black/10 dark:border-white/10 flex items-center gap-2 px-3">

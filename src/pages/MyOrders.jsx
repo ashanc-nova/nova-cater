@@ -28,6 +28,12 @@ const normalizePhone = (value) => String(value || '').replace(/\D/g, '')
 
 const normalizedOrderRef = (orderId) => String(orderId || '').replace('order_', '')
 
+const isUpcomingOrder = (order) => {
+  if (order.status === 'Completed') return false
+  if (!order.eventDate || order.eventDate === 'Date not specified') return true
+  return new Date(order.eventDate) >= new Date()
+}
+
 export default function MyOrders() {
   const [orders, setOrders] = useState([])
   const [trustedOrderIds, setTrustedOrderIds] = useState([])
@@ -90,8 +96,8 @@ export default function MyOrders() {
 
   const filteredOrders = trustedOrders.filter(order => {
     if (activeTab === 'all') return true
-    if (activeTab === 'upcoming') return order.status !== 'Completed'
-    return order.status === 'Completed'
+    if (activeTab === 'upcoming') return isUpcomingOrder(order)
+    return !isUpcomingOrder(order)
   })
 
   const lookupResults = searchQuery.trim()
@@ -130,14 +136,23 @@ export default function MyOrders() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
+    <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-16">
       <div className="animate-slide-up">
-        <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors mb-8">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
-        </button>
+        <div className="flex items-center justify-between gap-3 mb-6 md:mb-8">
+          <button onClick={() => navigate('/')} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0 lg:hidden"
+            aria-label="Search orders"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/></svg>
+          </button>
+        </div>
 
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
-          <div className="glass rounded-[28px] p-1.5 inline-flex items-center gap-1 w-fit">
+          <div className="glass rounded-[28px] p-1.5 inline-flex items-center gap-1 w-full md:w-fit overflow-x-auto">
             {[
               { id: 'all', label: 'All' },
               { id: 'upcoming', label: 'Upcoming' },
@@ -148,7 +163,7 @@ export default function MyOrders() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`min-w-[154px] px-6 py-3 rounded-[22px] text-base font-medium transition-all ${active ? 'bg-primary-700 text-white shadow-[0_12px_30px_rgba(199,33,41,0.22)]' : 'th-muted hover:th-heading'}`}
+                  className={`min-w-[112px] md:min-w-[154px] px-4 md:px-6 py-3 rounded-[22px] text-sm md:text-base font-medium transition-all ${active ? 'bg-primary-700 text-white shadow-[0_12px_30px_rgba(199,33,41,0.22)]' : 'th-muted hover:th-heading'}`}
                 >
                   {tab.label}
                 </button>
@@ -156,17 +171,17 @@ export default function MyOrders() {
             })}
           </div>
 
-          <button onClick={() => setSearchOpen(true)} className="btn-primary text-base py-3 px-8 rounded-[24px] inline-flex items-center justify-center w-full lg:w-auto">
+          <button onClick={() => setSearchOpen(true)} className="hidden lg:inline-flex btn-primary text-base py-3 px-8 rounded-[24px] items-center justify-center w-full lg:w-auto">
             Search
           </button>
         </div>
 
         {searchOpen && (
-          <div className="glass-strong rounded-[30px] p-5 md:p-6 mb-8">
+          <div className="glass-strong rounded-[24px] md:rounded-[30px] p-4 md:p-6 mb-6 md:mb-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold th-heading">Search an order</h2>
-                <p className="text-sm th-muted mt-1">Look up orders using a phone number, email address, or order ID.</p>
+                <h2 className="text-lg md:text-xl font-semibold th-heading">Search an order</h2>
+                <p className="text-xs md:text-sm th-muted mt-1">Look up orders using a phone number, email address, or order ID.</p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:min-w-[540px]">
@@ -209,7 +224,7 @@ export default function MyOrders() {
                     <button
                       key={`lookup_${order.id}`}
                       onClick={() => openOrder(order)}
-                      className="w-full text-left glass rounded-[28px] p-5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)] transition-all"
+                      className="w-full text-left glass rounded-[24px] md:rounded-[28px] p-4 md:p-5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)] transition-all"
                     >
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div>
@@ -241,7 +256,6 @@ export default function MyOrders() {
           )}
 
           {filteredOrders.map(order => {
-            const itemCount = order.cart.reduce((sum, item) => sum + item.quantity, 0)
             const dueDate = order.eventDate
             const serviceLabel = order.serviceType === 'pickup' ? 'Pick-up' : 'Delivery'
             const isCompleted = order.status === 'Completed'
@@ -252,32 +266,31 @@ export default function MyOrders() {
               <button
                 key={order.id}
                 onClick={() => openOrder(order)}
-                className="w-full text-left glass-strong rounded-[32px] p-8 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all"
+                className="w-full text-left glass-strong rounded-[24px] md:rounded-[32px] p-4 md:p-6 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all"
               >
-                <div className="flex justify-end mb-4">
+                <div className="flex items-start justify-between gap-3 mb-3 md:mb-4">
+                  <h2 className="text-lg md:text-2xl font-semibold tracking-tight th-heading">
+                    {order.eventName || 'Unnamed Event'}
+                  </h2>
                   <span className={`w-3 h-3 rounded-full ${statusDotClass}`} aria-label={statusLabel} title={statusLabel} />
                 </div>
 
-                <div className="glass rounded-[26px] px-6 py-6 grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className="glass rounded-[20px] md:rounded-[26px] px-4 md:px-5 py-4 md:py-5 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4">
                   <div>
-                    <p className="text-sm th-muted mb-2">Order ID</p>
-                    <p className="text-[18px] font-semibold th-heading">#{String(order.id).replace('order_', '').slice(-7)}</p>
+                    <p className="text-xs md:text-sm th-muted mb-1.5">Order ID</p>
+                    <p className="text-base md:text-[18px] font-semibold th-heading">#{String(order.id).replace('order_', '').slice(-7)}</p>
                   </div>
                   <div>
-                    <p className="text-sm th-muted mb-2">Due on</p>
-                    <p className="text-[18px] font-semibold th-heading">{formatShortDate(dueDate)} <span className="mx-2 th-ghost">&bull;</span> {formatTime(dueDate)}</p>
+                    <p className="text-xs md:text-sm th-muted mb-1.5">Date &amp; time</p>
+                    <p className="text-base md:text-[18px] font-semibold th-heading">{formatShortDate(dueDate)} <span className="mx-2 th-ghost">&bull;</span> {formatTime(dueDate)}</p>
                   </div>
                   <div>
-                    <p className="text-sm th-muted mb-2">Items / Total</p>
-                    <p className="text-[18px] font-semibold th-heading">
-                      {itemCount} item{itemCount !== 1 ? 's' : ''}
-                      <span className="mx-2 th-ghost">&bull;</span>
-                      {formatCurrency(order.total)}
-                    </p>
+                    <p className="text-xs md:text-sm th-muted mb-1.5">Total</p>
+                    <p className="text-base md:text-[18px] font-semibold th-heading">{formatCurrency(order.total)}</p>
                   </div>
                   <div>
-                    <p className="text-sm th-muted mb-2">Type</p>
-                    <p className="text-[18px] font-semibold th-heading">{serviceLabel}</p>
+                    <p className="text-xs md:text-sm th-muted mb-1.5">Type</p>
+                    <p className="text-base md:text-[18px] font-semibold th-heading">{serviceLabel}</p>
                   </div>
                 </div>
               </button>

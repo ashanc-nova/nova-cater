@@ -56,7 +56,7 @@ export default function OrderSummary() {
 
   if (!order) {
     return (
-      <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-16">
         <div className="text-center py-20">
           <p className="th-muted">Order not found</p>
           <Link to="/my-orders" className="text-primary-400 text-sm font-medium mt-2 inline-block hover:text-primary-300 transition-colors">Back to My Orders</Link>
@@ -138,10 +138,10 @@ export default function OrderSummary() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
+    <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-16">
       <div className="animate-slide-up">
         <div className="flex items-center justify-between gap-4 mb-8">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0">
+          <button onClick={() => navigate('/my-orders')} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
           </button>
 
@@ -154,6 +154,10 @@ export default function OrderSummary() {
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.9fr)] gap-8 items-start">
           <section className="glass-strong rounded-[32px] p-6 md:p-7">
             <div className="glass rounded-[28px] p-6 mb-6">
+              <div className="pb-5 mb-5 border-b border-black/8 dark:border-white/8">
+                <h2 className="text-[24px] font-bold tracking-tight th-heading">{order.eventName || 'Unnamed Event'}</h2>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full glass flex items-center justify-center">
@@ -182,7 +186,7 @@ export default function OrderSummary() {
                 {[
                   { label: 'Service Type', value: order.serviceType === 'pickup' ? 'Pickup' : 'Delivery', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>, extra: null },
                   { label: 'Address', value: order.deliveryAddress || 'Pickup', icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></>, extra: order.deliveryInstructions ? `Instructions: ${order.deliveryInstructions}` : null },
-                  { label: 'Contact Detail', value: order.customerEmail || 'N/A', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>, extra: order.customerName || null },
+                  { label: 'Contact Detail', value: order.customerPhone || 'N/A', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>, extra: [order.customerName, order.customerEmail].filter(Boolean).join(' • ') || null },
                   { label: 'Guest Count', value: order.guestCount || 'N/A', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A6.97 6.97 0 0112 15a6.97 6.97 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/> , extra: order.specialRequirements || null },
                 ].map((detail, index) => (
                   <div key={detail.label} className={`flex items-start gap-4 py-5 ${index !== 3 ? 'border-b border-dashed border-black/8 dark:border-white/8' : ''}`}>

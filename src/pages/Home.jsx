@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
   const highlightedItems = new Set([0, 1, 3])
-  const stickyCategoryOffset = 168
+  const getStickyCategoryOffset = () => (window.innerWidth < 768 ? 108 : 168)
 
   useEffect(() => {
     const updateActiveCategoryFromScroll = () => {
@@ -74,7 +74,7 @@ export default function Home() {
         const section = sectionRefs.current[index]
         if (!section) return
         const sectionTop = section.getBoundingClientRect().top
-        if (sectionTop - stickyCategoryOffset <= 0) nextActive = index
+        if (sectionTop - getStickyCategoryOffset() <= 0) nextActive = index
       })
 
       setActiveCategory(prev => (prev === nextActive ? prev : nextActive))
@@ -94,7 +94,7 @@ export default function Home() {
 
     setActiveCategory(index)
     isAutoScrollingRef.current = true
-    const scrollTop = section.getBoundingClientRect().top + window.scrollY - stickyCategoryOffset
+    const scrollTop = section.getBoundingClientRect().top + window.scrollY - getStickyCategoryOffset()
     window.scrollTo({ top: scrollTop, behavior: 'smooth' })
 
     window.setTimeout(() => {
@@ -179,21 +179,21 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
+    <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-24 md:pb-16">
       {/* Hero Section: 2 columns */}
       <section className="mb-8">
-        <div className="flex flex-col md:flex-row gap-6 items-stretch">
+        <div className="flex flex-col md:flex-row gap-5 md:gap-6 items-stretch">
           {/* Left: Branding */}
           <div className="md:w-1/2 flex flex-col justify-center animate-slide-up">
             <div className="inline-flex items-center gap-2 badge-glass text-primary-300 mb-3 w-fit">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse-slow"></span>
               Catering &bull; Platters &bull; Party Trays
             </div>
-            <h1 className="font-display font-extrabold text-3xl md:text-5xl th-heading mb-3 tracking-tight leading-tight">
+            <h1 className="font-display font-extrabold text-[2.2rem] leading-[0.95] md:text-5xl th-heading mb-3 tracking-tight">
               Famous<br />
               <span className="gradient-text">Steakburger Catering</span>
             </h1>
-            <p className="th-muted text-base max-w-lg leading-relaxed mb-4">
+            <p className="th-muted text-sm md:text-base max-w-lg leading-relaxed mb-4">
               Platters, trays, and shake packs for any event. The original better burger since 1934.
             </p>
             <div className="flex items-center gap-4">
@@ -256,6 +256,27 @@ export default function Home() {
         <div>
           {/* Menu Section */}
           <div>
+            <div className="md:hidden flex justify-end mb-3">
+              <div className="flex gap-1 glass rounded-xl p-1">
+                <button
+                  onClick={() => setMenuLayout('grid')}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${menuLayout === 'grid' ? 'bg-primary-500/20 text-primary-400' : 'th-faint hover:th-muted'}`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setMenuLayout('compact')}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${menuLayout === 'compact' ? 'bg-primary-500/20 text-primary-400' : 'th-faint hover:th-muted'}`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h3M5 12h3M5 17h3M11 7h8M11 12h8M11 17h8" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
             {/* Category Tabs + Layout Toggle */}
             <div className="sticky top-16 z-30 -mx-2 px-2 py-3 mb-8 glass-nav border-y border-black/5 dark:border-white/5 rounded-2xl">
 
@@ -274,7 +295,7 @@ export default function Home() {
                     </button>
                   ))}
                 </div>
-                <div className="flex gap-1 glass rounded-xl p-1 flex-shrink-0">
+                <div className="hidden md:flex gap-1 glass rounded-xl p-1 flex-shrink-0">
                   <button
                     onClick={() => setMenuLayout('grid')}
                     className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${menuLayout === 'grid' ? 'bg-primary-500/20 text-primary-400' : 'th-faint hover:th-muted'
@@ -314,33 +335,33 @@ export default function Home() {
                     <h2 className="font-display text-2xl font-bold th-heading mb-5">{category}</h2>
 
                     {menuLayout === 'grid' && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                         {items.map((item, index) => (
-                          <div key={`grid-${categoryIndex}-${index}`} className="glass rounded-3xl p-5 hover-card group">
-                            <div className="flex items-stretch gap-4">
+                          <div key={`grid-${categoryIndex}-${index}`} className="glass rounded-3xl p-4 md:p-5 hover-card group">
+                            <div className="flex items-stretch gap-3 md:gap-4">
                               <div className="min-w-0 flex-1 flex flex-col">
-                                <h3 className="font-display font-bold th-heading group-hover:text-primary-400 transition-colors mb-1.5 text-lg leading-tight">
+                                <h3 className="font-display font-bold th-heading group-hover:text-primary-400 transition-colors mb-1.5 text-base md:text-lg leading-tight">
                                   {item.name}
                                 </h3>
-                                <p className="th-faint text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
+                                <p className="th-faint text-xs md:text-sm leading-relaxed mb-4 line-clamp-3 flex-1">
                                   {item.description}
                                 </p>
 
-                                <div className="flex flex-wrap items-center gap-2 mb-5">
+                                <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-5">
                                   <span className="badge-glass text-primary-300 text-xs backdrop-blur-md">Serves {item.serves}</span>
                                   <span className="badge-glass th-ghost text-xs backdrop-blur-md">{item.unit}</span>
                                 </div>
 
                                 <div className="flex items-end justify-between gap-4">
                                   <div>
-                                    <span className="text-xl font-bold gradient-text">${item.price.toFixed(2)}</span>
+                                    <span className="text-lg md:text-xl font-bold gradient-text">${item.price.toFixed(2)}</span>
                                     <span className="text-xs th-ghost ml-1">/ {item.unit.split(' ')[0]}</span>
                                   </div>
                                 </div>
                               </div>
 
-                              <div className="w-28 sm:w-36 md:w-40 shrink-0 flex flex-col items-end justify-between ml-auto">
-                                <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-3xl overflow-hidden">
+                              <div className="w-24 sm:w-28 md:w-40 shrink-0 flex flex-col items-end justify-between ml-auto">
+                                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-40 md:h-40 rounded-3xl overflow-hidden">
                                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
@@ -374,18 +395,18 @@ export default function Home() {
                     )}
 
                     {menuLayout === 'compact' && (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                         {items.map((item, index) => (
                           <div key={`compact-${categoryIndex}-${index}`} className="glass rounded-2xl overflow-hidden hover-card group">
                             <div className="relative">
-                              <img src={item.image} alt={item.name} className="w-full h-28 object-cover" />
+                              <img src={item.image} alt={item.name} className="w-full h-24 md:h-28 object-cover" />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                               <div className="absolute bottom-2 left-2">
                                 <span className="badge-glass text-primary-300 text-[10px] backdrop-blur-md">Serves {item.serves}</span>
                               </div>
                             </div>
-                            <div className="p-3">
-                              <h3 className="font-display font-bold text-sm th-heading group-hover:text-primary-400 transition-colors mb-0.5 truncate">{item.name}</h3>
+                              <div className="p-3">
+                                <h3 className="font-display font-bold text-sm th-heading group-hover:text-primary-400 transition-colors mb-0.5 truncate">{item.name}</h3>
                               <p className="text-[10px] th-ghost mb-1.5 truncate">{item.unit}</p>
                               <div className="flex items-center justify-between">
                                 <span className="text-sm font-bold gradient-text">${item.price.toFixed(2)}</span>
@@ -418,21 +439,21 @@ export default function Home() {
       {modifierItem && configuredPlatter && (
         <div className="fixed inset-0 z-[70]">
           <button className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" onClick={closeModifierModal} aria-label="Close modifier modal" />
-          <div className="absolute inset-y-4 right-4 left-4 md:left-auto md:w-[520px] glass-strong rounded-[30px] overflow-hidden shadow-2xl flex flex-col">
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-black/5 dark:border-white/5">
+          <div className="absolute inset-y-3 right-3 left-3 md:inset-y-4 md:right-4 md:left-auto md:w-[520px] glass-strong rounded-[30px] overflow-hidden shadow-2xl flex flex-col">
+            <div className="flex items-center gap-3 px-4 md:px-5 py-4 border-b border-black/5 dark:border-white/5">
               <button onClick={closeModifierModal} className="w-10 h-10 rounded-full border border-black/10 dark:border-white/10 th-muted flex items-center justify-center hover:th-heading transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
               <span className="text-lg md:text-xl font-semibold th-heading">Customize platter</span>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 py-5">
+            <div className="flex-1 overflow-y-auto px-4 md:px-5 py-5">
               <div className="flex gap-3 items-start pb-5 border-b border-black/5 dark:border-white/5">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden shrink-0">
                   <img src={modifierItem.image} alt={modifierItem.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-xl md:text-2xl leading-tight font-semibold th-heading mb-1.5">{modifierItem.name}</h2>
+                  <h2 className="text-lg md:text-2xl leading-tight font-semibold th-heading mb-1.5">{modifierItem.name}</h2>
                   <p className="th-muted text-[13px] leading-relaxed">{modifierItem.description}</p>
                 </div>
               </div>

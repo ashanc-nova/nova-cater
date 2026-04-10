@@ -1,26 +1,88 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
-const formatTimeLabel = (value) => {
-  if (!value) return 'Select time'
+const formatDateInput = (isoDate) => {
+  if (!isoDate) return ''
+  const [year, month, day] = isoDate.split('-')
+  if (!year || !month || !day) return ''
+  return `${month}/${day}/${year}`
+}
+
+const parseDateInput = (value) => {
+  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!match) return ''
+  const [, month, day, year] = match
+  const iso = `${year}-${month}-${day}`
+  const date = new Date(`${iso}T00:00:00`)
+  if (Number.isNaN(date.getTime())) return ''
+  const normalized = date.toISOString().split('T')[0]
+  return normalized === iso ? iso : ''
+}
+
+const normalizeDateTyping = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 8)
+  if (digits.length <= 2) return digits
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
+}
+
+const getTimeEditorParts = (value) => {
+  if (!value) return { input: '', period: 'AM' }
   const [rawHour = '0', minute = '00'] = value.split(':')
   const hour = Number(rawHour)
-  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const period = hour >= 12 ? 'PM' : 'AM'
   const normalized = hour % 12 || 12
-  return `${normalized}:${minute} ${suffix}`
+  return {
+    input: `${String(normalized).padStart(2, '0')}:${minute}`,
+    period,
+  }
 }
+
+const normalizeTimeTyping = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 4)
+  if (digits.length <= 2) return digits
+  return `${digits.slice(0, 2)}:${digits.slice(2)}`
+}
+
+const parseTimeEditorValue = (value, period) => {
+  const match = value.match(/^(\d{1,2}):(\d{2})$/)
+  if (!match) return ''
+  let hour = Number(match[1])
+  const minute = Number(match[2])
+  if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return ''
+  if (period === 'PM' && hour !== 12) hour += 12
+  if (period === 'AM' && hour === 12) hour = 0
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+}
+
+const getTodayDateString = () => new Date().toISOString().split('T')[0]
+
+const getMinimumTimeForSelectedDate = (selectedDate) => {
+  if (!selectedDate || selectedDate !== getTodayDateString()) return ''
+
+  const now = new Date()
+  const hours = `${now.getHours()}`.padStart(2, '0')
+  const minutes = `${now.getMinutes()}`.padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+const getNativePickerDate = (isoDate) => isoDate || getTodayDateString()
 
 export default function OrderDetails() {
   const { cart, clearCart } = useCart()
   const navigate = useNavigate()
+  const nativeDateInputRef = useRef(null)
 
   const [eventName, setEventName] = useState('')
   const [eventDate, setEventDate] = useState('')
+  const [eventDateInput, setEventDateInput] = useState('')
   const [eventTime, setEventTime] = useState('')
-  const [serviceType, setServiceType] = useState('delivery')
+  const [eventTimeInput, setEventTimeInput] = useState('')
+  const [eventTimePeriod, setEventTimePeriod] = useState('AM')
+  const [serviceType, setServiceType] = useState('pickup')
   const [deliveryAddress, setDeliveryAddress] = useState('')
   const [deliveryInstructions, setDeliveryInstructions] = useState('')
   const [guestCount, setGuestCount] = useState('')
@@ -30,26 +92,32 @@ export default function OrderDetails() {
   const [specialRequirements, setSpecialRequirements] = useState('')
   const [paymentOption, setPaymentOption] = useState('pay-later')
   const [depositAmount, setDepositAmount] = useState(0)
+  const [validationMessage, setValidationMessage] = useState('')
 
   const eventDateTime = eventDate && eventTime ? `${eventDate}T${eventTime}` : ''
 
   useEffect(() => {
     window.scrollTo(0, 0)
     const saved = JSON.parse(localStorage.getItem('snsAppEventDetails') || '{}')
+    const lastCustomerDetails = JSON.parse(localStorage.getItem('snsLastCustomerDetails') || '{}')
     setEventName(saved.eventName || '')
     if (saved.eventDateTime) {
       const [savedDate, savedTime] = saved.eventDateTime.split('T')
       setEventDate(savedDate || '')
+      setEventDateInput(formatDateInput(savedDate || ''))
       setEventTime(savedTime || '')
+      const timeParts = getTimeEditorParts(savedTime || '')
+      setEventTimeInput(timeParts.input)
+      setEventTimePeriod(timeParts.period)
     }
-    const savedService = saved.serviceType && saved.serviceType !== 'dineIn' ? saved.serviceType : 'delivery'
+    const savedService = saved.serviceType && saved.serviceType !== 'dineIn' ? saved.serviceType : 'pickup'
     setServiceType(savedService)
     setDeliveryAddress(saved.deliveryAddress || '')
     setDeliveryInstructions(saved.deliveryInstructions || '')
     setGuestCount(saved.guestCount || '')
-    setCustomerName(saved.customerName || '')
-    setCustomerPhone(saved.customerPhone || '')
-    setCustomerEmail(saved.customerEmail || '')
+    setCustomerName(saved.customerName || lastCustomerDetails.customerName || '')
+    setCustomerPhone(saved.customerPhone || lastCustomerDetails.customerPhone || '')
+    setCustomerEmail(saved.customerEmail || lastCustomerDetails.customerEmail || '')
     setSpecialRequirements(saved.specialRequirements || '')
   }, [])
 
@@ -58,6 +126,16 @@ export default function OrderDetails() {
   const serviceFee = cartSubtotal * 0.06
   const total = cartSubtotal + tax + serviceFee
   const suggestedDeposits = [0.25, 0.5, 0.75].map(multiplier => Number((total * multiplier).toFixed(2)))
+  const minAllowedTime = getMinimumTimeForSelectedDate(eventDate)
+
+  useEffect(() => {
+    if (minAllowedTime && eventTime && eventTime < minAllowedTime) {
+      setEventTime(minAllowedTime)
+      const timeParts = getTimeEditorParts(minAllowedTime)
+      setEventTimeInput(timeParts.input)
+      setEventTimePeriod(timeParts.period)
+    }
+  }, [eventDate, eventTime, minAllowedTime])
 
   useEffect(() => {
     if (paymentOption === 'pay-deposit') {
@@ -95,9 +173,48 @@ export default function OrderDetails() {
     navigate('/')
   }
 
+  const showValidation = (message) => {
+    setValidationMessage(message)
+  }
+
   const placeOrder = () => {
+    if (!eventName.trim()) {
+      showValidation('Please enter the event name before placing the order.')
+      return
+    }
+
+    if (!guestCount.trim()) {
+      showValidation('Please enter the party size before placing the order.')
+      return
+    }
+
+    if (!eventDateInput.trim() || !eventDate) {
+      showValidation('Please enter the event date in MM/DD/YYYY format.')
+      return
+    }
+
+    if (!eventTimeInput.trim() || !eventTime) {
+      showValidation('Please enter the event time in HH:MM format and choose AM or PM.')
+      return
+    }
+
     if (!customerName.trim() || !customerPhone.trim()) {
-      window.alert('Please enter the customer name and phone number before placing the order.')
+      showValidation('Please enter the customer name and phone number before placing the order.')
+      return
+    }
+
+    if (!/^\d{10}$/.test(customerPhone)) {
+      showValidation('Please enter a valid 10-digit phone number.')
+      return
+    }
+
+    if (eventDate && eventDate < getTodayDateString()) {
+      showValidation('Please choose today or a future date for the event.')
+      return
+    }
+
+    if (minAllowedTime && eventTime && eventTime < minAllowedTime) {
+      showValidation('Please choose a future time for today.')
       return
     }
 
@@ -129,6 +246,11 @@ export default function OrderDetails() {
     const orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
     orders.unshift(orderDetails)
     localStorage.setItem('snsAppOrders', JSON.stringify(orders))
+    localStorage.setItem('snsLastCustomerDetails', JSON.stringify({
+      customerName,
+      customerPhone,
+      customerEmail,
+    }))
 
     const trustedOrderIds = JSON.parse(localStorage.getItem('snsTrustedOrderIds') || '[]')
     if (!trustedOrderIds.includes(orderId)) {
@@ -138,11 +260,11 @@ export default function OrderDetails() {
 
     clearCart()
     localStorage.removeItem('snsAppEventDetails')
-    navigate('/my-orders')
+    navigate(`/order-summary?id=${orderId}`)
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-6 pt-28 pb-16">
+    <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-16">
       <div className="mb-8 animate-slide-up">
         <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors mb-4">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
@@ -165,28 +287,28 @@ export default function OrderDetails() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Event name</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={eventName} onChange={e => setEventName(e.target.value)} placeholder="Grab your loyalty rewards!" />
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={eventName} onChange={e => setEventName(e.target.value)} placeholder="Enter event name" />
                 </label>
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Party size</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={guestCount} onChange={e => setGuestCount(e.target.value)} placeholder="20" />
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={guestCount} onChange={e => setGuestCount(e.target.value)} placeholder="Enter party size" />
                 </label>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-4">
                 {[
                   {
-                    value: 'delivery',
-                    label: 'Delivery',
-                    icon: (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.106-1.789l5-2.5a2 2 0 011.788 0l5 2.5A2 2 0 0117 8.618v6.764a2 2 0 01-1.106 1.79L10 20m0 0l5-2.5M10 20V10"/></svg>
-                    ),
-                  },
-                  {
                     value: 'pickup',
                     label: 'Pickup',
                     icon: (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ),
+                  },
+                  {
+                    value: 'delivery',
+                    label: 'Delivery',
+                    icon: (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.106-1.789l5-2.5a2 2 0 011.788 0l5 2.5A2 2 0 0117 8.618v6.764a2 2 0 01-1.106 1.79L10 20m0 0l5-2.5M10 20V10"/></svg>
                     ),
                   },
                 ].map(option => {
@@ -207,13 +329,90 @@ export default function OrderDetails() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Date</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} />
+                  <div className="glass-input w-full h-14 rounded-2xl px-4 text-sm flex items-center justify-between gap-3">
+                    <input
+                      className="bg-transparent h-full flex-1 outline-none focus:outline-none focus:ring-0"
+                      inputMode="numeric"
+                      value={eventDateInput}
+                      onChange={e => {
+                        const nextValue = normalizeDateTyping(e.target.value)
+                        setEventDateInput(nextValue)
+                        const parsed = parseDateInput(nextValue)
+                        setEventDate(parsed)
+                      }}
+                      onBlur={() => {
+                        const parsed = parseDateInput(eventDateInput)
+                        if (parsed) {
+                          setEventDate(parsed)
+                          setEventDateInput(formatDateInput(parsed))
+                        }
+                      }}
+                      placeholder="MM/DD/YYYY"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => nativeDateInputRef.current?.showPicker?.() ?? nativeDateInputRef.current?.click()}
+                      className="shrink-0 th-faint hover:th-heading transition-colors"
+                      aria-label="Open date picker"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10m-11 9h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg>
+                    </button>
+                    <input
+                      ref={nativeDateInputRef}
+                      type="date"
+                      className="sr-only"
+                      min={getTodayDateString()}
+                      value={getNativePickerDate(eventDate)}
+                      onChange={e => {
+                        const nextDate = e.target.value
+                        setEventDate(nextDate)
+                        setEventDateInput(formatDateInput(nextDate))
+                      }}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    />
+                  </div>
                 </label>
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Time</span>
-                  <div className="glass-input rounded-2xl px-4 py-3.5 flex items-center justify-between gap-3">
-                    <input className="bg-transparent flex-1 text-sm outline-none" type="time" value={eventTime} onChange={e => setEventTime(e.target.value)} />
-                    <span className="text-xs font-semibold th-faint whitespace-nowrap">{formatTimeLabel(eventTime)}</span>
+                  <div className="glass-input h-14 rounded-2xl px-4 flex items-center justify-between gap-3">
+                    <input
+                      className="bg-transparent h-full flex-1 text-sm outline-none focus:outline-none focus:ring-0 focus:border-transparent border-0 shadow-none"
+                      inputMode="numeric"
+                      value={eventTimeInput}
+                      onChange={e => {
+                        const nextValue = normalizeTimeTyping(e.target.value)
+                        setEventTimeInput(nextValue)
+                        setEventTime(parseTimeEditorValue(nextValue, eventTimePeriod))
+                      }}
+                      onBlur={() => {
+                        const parsed = parseTimeEditorValue(eventTimeInput, eventTimePeriod)
+                        if (parsed) {
+                          setEventTime(parsed)
+                          setEventTimeInput(getTimeEditorParts(parsed).input)
+                        }
+                      }}
+                      placeholder="HH:MM"
+                    />
+                    <div className="inline-flex items-center rounded-xl bg-black/[0.04] dark:bg-white/[0.05] p-1 shrink-0">
+                      {['AM', 'PM'].map(period => {
+                        const active = eventTimePeriod === period
+                        return (
+                          <button
+                            key={period}
+                            type="button"
+                            onClick={() => {
+                              const nextPeriod = period
+                              setEventTimePeriod(nextPeriod)
+                              setEventTime(parseTimeEditorValue(eventTimeInput, nextPeriod))
+                            }}
+                            className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors ${active ? 'bg-primary-700 text-white shadow-sm' : 'th-muted hover:th-heading'}`}
+                          >
+                            {period}
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
                 </label>
               </div>
@@ -222,11 +421,11 @@ export default function OrderDetails() {
                 <>
                   <label className="block mb-4">
                     <span className="block text-sm th-muted mb-2">Delivery address</span>
-                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} placeholder="San Ramon, 100 Becker St, CA" />
+                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryAddress} onChange={e => setDeliveryAddress(e.target.value)} placeholder="Enter delivery address" />
                   </label>
                   <label className="block mb-4">
                     <span className="block text-sm th-muted mb-2">Delivery instructions</span>
-                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryInstructions} onChange={e => setDeliveryInstructions(e.target.value)} placeholder="Please leave it next to the door" />
+                    <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={deliveryInstructions} onChange={e => setDeliveryInstructions(e.target.value)} placeholder="Enter delivery instructions" />
                   </label>
                 </>
               )}
@@ -245,15 +444,21 @@ export default function OrderDetails() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Name *</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Alex Carter" />
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerName} onChange={e => setCustomerName(e.target.value)} />
                 </label>
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Phone number *</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="(555) 010-1234" />
+                  <input
+                    className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm"
+                    type="tel"
+                    inputMode="numeric"
+                    value={customerPhone}
+                    onChange={e => setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  />
                 </label>
                 <label className="block">
                   <span className="block text-sm th-muted mb-2">Email (optional)</span>
-                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} placeholder="alex@company.com" />
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} />
                 </label>
               </div>
             </div>
@@ -417,6 +622,36 @@ export default function OrderDetails() {
           </div>
         </aside>
       </div>
+
+      {validationMessage && (
+        <div className="fixed inset-0 z-[120] bg-black/45 backdrop-blur-sm flex items-center justify-center p-5">
+          <div className="w-full max-w-md glass-strong rounded-[32px] p-6 md:p-7 animate-slide-up">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.22em] th-faint mb-2">Missing details</p>
+                <h2 className="text-2xl font-semibold th-heading">Complete this order</h2>
+              </div>
+              <button
+                onClick={() => setValidationMessage('')}
+                className="w-10 h-10 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0"
+                aria-label="Close validation message"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            <div className="rounded-[24px] border border-rose-500/15 bg-rose-500/6 px-4 py-4">
+              <p className="text-sm leading-6 th-heading">{validationMessage}</p>
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button onClick={() => setValidationMessage('')} className="btn-primary text-sm py-3 px-6 rounded-2xl">
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
