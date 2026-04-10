@@ -25,6 +25,7 @@ export default function OrderDetails() {
   const [deliveryInstructions, setDeliveryInstructions] = useState('')
   const [guestCount, setGuestCount] = useState('')
   const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
   const [specialRequirements, setSpecialRequirements] = useState('')
   const [paymentOption, setPaymentOption] = useState('pay-later')
@@ -47,6 +48,7 @@ export default function OrderDetails() {
     setDeliveryInstructions(saved.deliveryInstructions || '')
     setGuestCount(saved.guestCount || '')
     setCustomerName(saved.customerName || '')
+    setCustomerPhone(saved.customerPhone || '')
     setCustomerEmail(saved.customerEmail || '')
     setSpecialRequirements(saved.specialRequirements || '')
   }, [])
@@ -82,6 +84,7 @@ export default function OrderDetails() {
       deliveryInstructions,
       guestCount,
       customerName,
+      customerPhone,
       customerEmail,
       specialRequirements,
     }))
@@ -93,6 +96,11 @@ export default function OrderDetails() {
   }
 
   const placeOrder = () => {
+    if (!customerName.trim() || !customerPhone.trim()) {
+      window.alert('Please enter the customer name and phone number before placing the order.')
+      return
+    }
+
     const orderId = `order_${Date.now()}`
     const orderDetails = {
       id: orderId,
@@ -103,6 +111,7 @@ export default function OrderDetails() {
       deliveryInstructions,
       guestCount,
       customerName,
+      customerPhone,
       customerEmail,
       specialRequirements,
       cart,
@@ -120,6 +129,12 @@ export default function OrderDetails() {
     const orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
     orders.unshift(orderDetails)
     localStorage.setItem('snsAppOrders', JSON.stringify(orders))
+
+    const trustedOrderIds = JSON.parse(localStorage.getItem('snsTrustedOrderIds') || '[]')
+    if (!trustedOrderIds.includes(orderId)) {
+      trustedOrderIds.unshift(orderId)
+      localStorage.setItem('snsTrustedOrderIds', JSON.stringify(trustedOrderIds))
+    }
 
     clearCart()
     localStorage.removeItem('snsAppEventDetails')
@@ -227,13 +242,17 @@ export default function OrderDetails() {
                 <h2 className="text-[28px] font-bold tracking-tight th-heading">Customer details</h2>
                 <p className="th-muted text-sm mt-1">We’ll use this to share order updates and coordinate the handoff</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <label className="block">
-                  <span className="block text-sm th-muted mb-2">Name</span>
+                  <span className="block text-sm th-muted mb-2">Name *</span>
                   <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Alex Carter" />
                 </label>
                 <label className="block">
-                  <span className="block text-sm th-muted mb-2">Email</span>
+                  <span className="block text-sm th-muted mb-2">Phone number *</span>
+                  <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="(555) 010-1234" />
+                </label>
+                <label className="block">
+                  <span className="block text-sm th-muted mb-2">Email (optional)</span>
                   <input className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)} placeholder="alex@company.com" />
                 </label>
               </div>

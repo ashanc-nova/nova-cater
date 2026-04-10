@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 export default function Cart() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, cartTotal } = useCart()
   const navigate = useNavigate()
-  const [hovered, setHovered] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const expandedPanelRef = useRef(null)
 
   const proceedToCheckout = () => {
     localStorage.setItem('snsAppCart', JSON.stringify(cart))
@@ -14,19 +15,42 @@ export default function Cart() {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
 
+  useEffect(() => {
+    if (!expanded) return
+
+    const handleOutsideClick = event => {
+      if (expandedPanelRef.current && !expandedPanelRef.current.contains(event.target)) {
+        setExpanded(false)
+      }
+    }
+
+    const handleEscape = event => {
+      if (event.key === 'Escape') setExpanded(false)
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [expanded])
+
   if (cart.length === 0) return null
 
   return (
     <>
       {/* Floating cart indicator - right edge */}
-      <div
-        className="fixed right-0 inset-y-0 z-50 hidden lg:flex items-center"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
+      <div className="fixed right-0 inset-y-0 w-0 z-50 hidden lg:block">
         {/* Collapsed tab */}
-        <div className={`transition-all duration-300 ease-in-out ${hovered ? 'opacity-0 pointer-events-none translate-x-2' : 'opacity-100 translate-x-0'}`}>
-          <div className="bg-gradient-to-b from-primary-500 to-primary-700 text-white rounded-l-[28px] w-[74px] py-5 cursor-pointer shadow-glow flex flex-col items-center gap-3">
+        <div className={`absolute right-0 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out ${expanded ? 'opacity-0 pointer-events-none translate-x-2' : 'opacity-100 translate-x-0'}`}>
+          <button
+            type="button"
+            onClick={() => setExpanded(true)}
+            className="bg-gradient-to-b from-primary-500 to-primary-700 text-white rounded-l-[28px] w-[74px] py-5 cursor-pointer shadow-glow flex flex-col items-center gap-3"
+            aria-label="Open cart"
+          >
             <div className="relative w-10 h-10 rounded-full border border-white/20 bg-black/10 flex items-center justify-center">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -37,14 +61,13 @@ export default function Cart() {
             </div>
             <div className="w-11 border-t border-white/70"></div>
             <span className="text-[12px] font-semibold">${cartTotal.toFixed(2)}</span>
-          </div>
+          </button>
         </div>
 
-        {/* Expanded flyout on hover */}
+        {/* Expanded flyout on click */}
         <div
-          className={`fixed right-0 top-16 h-[calc(100vh-4rem-8px)] transition-all duration-300 ease-in-out ${hovered ? 'opacity-100 translate-x-0' : 'opacity-0 pointer-events-none translate-x-4'}`}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          ref={expandedPanelRef}
+          className={`fixed right-0 top-16 h-[calc(100vh-4rem-8px)] transition-all duration-300 ease-in-out ${expanded ? 'opacity-100 translate-x-0' : 'opacity-0 pointer-events-none translate-x-4'}`}
         >
           <div className="glass-strong rounded-l-2xl shadow-xl w-[360px] h-full overflow-hidden flex flex-col">
             {/* Header */}

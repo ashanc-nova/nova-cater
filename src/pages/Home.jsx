@@ -418,30 +418,30 @@ export default function Home() {
       {modifierItem && configuredPlatter && (
         <div className="fixed inset-0 z-[70]">
           <button className="absolute inset-0 bg-slate-950/55 backdrop-blur-sm" onClick={closeModifierModal} aria-label="Close modifier modal" />
-          <div className="absolute inset-y-4 right-4 left-4 md:left-auto md:w-[560px] glass-strong rounded-[32px] overflow-hidden shadow-2xl flex flex-col">
-            <div className="flex items-center gap-4 px-6 py-5 border-b border-black/5 dark:border-white/5">
-              <button onClick={closeModifierModal} className="w-11 h-11 rounded-full border border-black/10 dark:border-white/10 th-muted flex items-center justify-center hover:th-heading transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          <div className="absolute inset-y-4 right-4 left-4 md:left-auto md:w-[520px] glass-strong rounded-[30px] overflow-hidden shadow-2xl flex flex-col">
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-black/5 dark:border-white/5">
+              <button onClick={closeModifierModal} className="w-10 h-10 rounded-full border border-black/10 dark:border-white/10 th-muted flex items-center justify-center hover:th-heading transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <span className="font-display text-2xl th-heading">Customize platter</span>
+              <span className="text-lg md:text-xl font-semibold th-heading">Customize platter</span>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-6">
-              <div className="flex gap-4 items-start pb-6 border-b border-black/5 dark:border-white/5">
-                <div className="w-24 h-24 rounded-3xl overflow-hidden shrink-0">
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+              <div className="flex gap-3 items-start pb-5 border-b border-black/5 dark:border-white/5">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0">
                   <img src={modifierItem.image} alt={modifierItem.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="font-display text-3xl leading-tight th-heading mb-2">{modifierItem.name}</h2>
-                  <p className="th-muted text-sm leading-relaxed">{modifierItem.description}</p>
+                  <h2 className="text-xl md:text-2xl leading-tight font-semibold th-heading mb-1.5">{modifierItem.name}</h2>
+                  <p className="th-muted text-[13px] leading-relaxed">{modifierItem.description}</p>
                 </div>
               </div>
 
-              <section className="py-6 border-b border-black/5 dark:border-white/5">
-                <div className="flex items-end justify-between mb-4">
+              <section className="py-5 border-b border-black/5 dark:border-white/5">
+                <div className="flex items-end justify-between mb-3">
                   <div>
-                    <h3 className="font-display text-xl th-heading">Choose size</h3>
-                    <p className="th-muted text-sm">Full tray is selected by default</p>
+                    <h3 className="text-base font-semibold th-heading">Choose size</h3>
+                    <p className="th-muted text-xs">Full tray is selected by default</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -452,16 +452,16 @@ export default function Home() {
                       <button
                         key={option.id}
                         onClick={() => setModifierState(prev => ({ ...prev, size: option.id }))}
-                        className={`rounded-3xl border p-4 text-left transition-all ${selected ? 'border-primary-400 bg-primary-500/10 shadow-[0_0_0_1px_rgba(199,33,41,0.15)]' : 'border-black/10 dark:border-white/10 hover:border-primary-300/40'}`}
+                        className={`rounded-2xl border p-3.5 text-left transition-all ${selected ? 'border-primary-400 bg-primary-500/10 shadow-[0_0_0_1px_rgba(199,33,41,0.15)]' : 'border-black/10 dark:border-white/10 hover:border-primary-300/40'}`}
                       >
-                        <div className="flex items-start justify-between gap-3 mb-2">
-                          <span className="font-semibold th-heading">{option.label}</span>
-                          <span className={`w-5 h-5 rounded-full border flex items-center justify-center ${selected ? 'border-primary-500 bg-primary-500 text-white' : 'border-black/15 dark:border-white/15'}`}>
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <span className="font-semibold text-sm th-heading">{option.label}</span>
+                          <span className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center ${selected ? 'border-primary-500 bg-primary-500 text-white' : 'border-black/15 dark:border-white/15'}`}>
                             {selected && <span className="w-2 h-2 rounded-full bg-white" />}
                           </span>
                         </div>
-                        <p className="text-sm th-faint mb-2">Serves about {Math.max(4, Math.round(modifierItem.serves * option.servesMultiplier))}</p>
-                        <p className="font-semibold text-primary-400">${optionPrice}</p>
+                        <p className="text-xs th-faint mb-1.5">Serves about {Math.max(4, Math.round(modifierItem.serves * option.servesMultiplier))}</p>
+                        <p className="font-semibold text-sm text-primary-400">${optionPrice}</p>
                       </button>
                     )
                   })}
@@ -469,11 +469,11 @@ export default function Home() {
               </section>
 
               {platterModifierSections.map(section => (
-                <section key={section.id} className="py-6 border-b border-black/5 dark:border-white/5 last:border-b-0">
-                  <div className="flex items-end justify-between mb-4">
+                <section key={section.id} className="py-5 border-b border-black/5 dark:border-white/5 last:border-b-0">
+                  <div className="flex items-end justify-between mb-3">
                     <div>
-                      <h3 className="font-display text-xl th-heading">{section.title}</h3>
-                      <p className="th-muted text-sm">{section.type === 'single' ? 'Choose one' : 'Pick any extras you want'}</p>
+                      <h3 className="text-base font-semibold th-heading">{section.title}</h3>
+                      <p className="th-muted text-xs">{section.type === 'single' ? 'Choose one' : 'Pick any extras you want'}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -488,14 +488,14 @@ export default function Home() {
                           onClick={() => section.type === 'single'
                             ? setModifierState(prev => ({ ...prev, [section.id]: option.id }))
                             : toggleMultiOption(section.id, option.id)}
-                          className={`rounded-3xl border p-4 text-left transition-all ${selected ? 'border-primary-400 bg-primary-500/10 shadow-[0_0_0_1px_rgba(199,33,41,0.15)]' : 'border-black/10 dark:border-white/10 hover:border-primary-300/40'}`}
+                          className={`rounded-2xl border p-3.5 text-left transition-all ${selected ? 'border-primary-400 bg-primary-500/10 shadow-[0_0_0_1px_rgba(199,33,41,0.15)]' : 'border-black/10 dark:border-white/10 hover:border-primary-300/40'}`}
                         >
-                          <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start justify-between gap-2">
                             <div>
-                              <div className="font-semibold th-heading">{option.label}</div>
-                              <div className="text-sm th-faint mt-1">{option.priceDelta > 0 ? `+$${option.priceDelta.toFixed(2)}` : 'Included'}</div>
+                              <div className="font-semibold text-sm th-heading">{option.label}</div>
+                              <div className="text-xs th-faint mt-1">{option.priceDelta > 0 ? `+$${option.priceDelta.toFixed(2)}` : 'Included'}</div>
                             </div>
-                            <span className={`w-5 h-5 rounded-full border flex items-center justify-center ${selected ? 'border-primary-500 bg-primary-500 text-white' : 'border-black/15 dark:border-white/15'}`}>
+                            <span className={`w-4.5 h-4.5 rounded-full border flex items-center justify-center ${selected ? 'border-primary-500 bg-primary-500 text-white' : 'border-black/15 dark:border-white/15'}`}>
                               {selected && <span className="w-2 h-2 rounded-full bg-white" />}
                             </span>
                           </div>
@@ -507,24 +507,24 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="px-6 py-5 border-t border-black/5 dark:border-white/5 bg-white/60 dark:bg-slate-950/30 backdrop-blur-xl">
+            <div className="px-5 py-4 border-t border-black/5 dark:border-white/5 bg-white/60 dark:bg-slate-950/30 backdrop-blur-xl">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setModifierState(prev => ({ ...prev, quantity: Math.max(1, prev.quantity - 1) }))}
-                    className="w-12 h-12 rounded-full border border-primary-300/40 th-heading flex items-center justify-center text-xl"
+                    className="w-10 h-10 rounded-full border border-primary-300/40 th-heading flex items-center justify-center text-lg"
                   >
                     -
                   </button>
-                  <span className="w-10 text-center font-display text-2xl th-heading">{modifierState.quantity}</span>
+                  <span className="w-8 text-center text-lg font-semibold th-heading">{modifierState.quantity}</span>
                   <button
                     onClick={() => setModifierState(prev => ({ ...prev, quantity: prev.quantity + 1 }))}
-                    className="w-12 h-12 rounded-full border border-primary-300/40 th-heading flex items-center justify-center text-xl"
+                    className="w-10 h-10 rounded-full border border-primary-300/40 th-heading flex items-center justify-center text-lg"
                   >
                     +
                   </button>
                 </div>
-                <button onClick={addConfiguredPlatterToCart} className="flex-1 btn-primary text-base py-4 flex items-center justify-center gap-3 rounded-[28px]">
+                <button onClick={addConfiguredPlatterToCart} className="flex-1 btn-primary text-sm py-3.5 flex items-center justify-center gap-2 rounded-[24px]">
                   Add to cart
                   <span className="text-white/70">|</span>
                   <span>${configuredTotal.toFixed(2)}</span>

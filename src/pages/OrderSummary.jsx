@@ -28,6 +28,10 @@ const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'curr
 
 export default function OrderSummary() {
   const [order, setOrder] = useState(null)
+  const [modifyOtpOpen, setModifyOtpOpen] = useState(false)
+  const [modifyOtpValue, setModifyOtpValue] = useState('')
+  const [modifyOtpError, setModifyOtpError] = useState('')
+  const [modifyOtpChannel, setModifyOtpChannel] = useState('mobile')
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { setCart } = useCart()
@@ -43,6 +47,8 @@ export default function OrderSummary() {
     window.scrollTo(0, 0)
     const orderId = searchParams.get('id')
     if (!orderId) return
+    const trustedOrderIds = JSON.parse(localStorage.getItem('snsTrustedOrderIds') || '[]')
+    if (!trustedOrderIds.includes(orderId)) return
     const orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
     const found = orders.find(o => o.id === orderId)
     if (found) setOrder(found)
@@ -71,21 +77,35 @@ export default function OrderSummary() {
       deliveryInstructions: order.deliveryInstructions || '',
       guestCount: order.guestCount || '',
       customerName: order.customerName || '',
+      customerPhone: order.customerPhone || '',
       customerEmail: order.customerEmail || '',
       specialRequirements: order.specialRequirements || '',
     }))
     navigate('/')
   }
 
-  const cancelOrder = () => {
-    const updatedOrder = {
-      ...order,
-      status: 'Cancelled',
-      paymentStatus: order.paymentStatus === 'Paid' ? 'Refund Pending' : 'Cancelled',
-    }
-    persistOrderUpdate(updatedOrder)
-    navigate('/my-orders')
+  const requestModifyOrder = () => {
+    setModifyOtpOpen(true)
+    setModifyOtpValue('')
+    setModifyOtpError('')
+    setModifyOtpChannel('mobile')
   }
+
+  const verifyModifyOtp = () => {
+    if (!/^\d{4}$/.test(modifyOtpValue)) {
+      setModifyOtpError('Enter the 4-digit OTP to continue with modifying this order.')
+      return
+    }
+
+    setModifyOtpOpen(false)
+    setModifyOtpValue('')
+    setModifyOtpError('')
+    modifyOrder()
+  }
+
+  const otpDestination = modifyOtpChannel === 'email'
+    ? (order?.customerEmail || 'your email address')
+    : (order?.customerPhone || 'your mobile number')
 
   const payNow = () => {
     const updatedOrder = {
@@ -180,11 +200,8 @@ export default function OrderSummary() {
 
               <div className="border-t border-black/8 dark:border-white/8 mt-3 pt-6">
                 <div className="flex flex-wrap gap-5 text-[18px] font-semibold">
-                  <button onClick={modifyOrder} className="text-primary-500 hover:text-primary-400 transition-colors">
+                  <button onClick={requestModifyOrder} className="text-primary-500 hover:text-primary-400 transition-colors">
                     Modify Order
-                  </button>
-                  <button onClick={cancelOrder} className="text-rose-500 hover:text-rose-400 transition-colors">
-                    Cancel Order
                   </button>
                 </div>
               </div>
@@ -271,6 +288,56 @@ export default function OrderSummary() {
           </aside>
         </div>
       </div>
+
+      {modifyOtpOpen && (
+        <div className="fixed inset-0 z-[120] bg-black/45 backdrop-blur-sm flex items-center justify-center p-5">
+          <div className="w-full max-w-md glass-strong rounded-[32px] p-6 md:p-7 animate-slide-up">
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <h2 className="text-2xl font-semibold th-heading">Verify to modify</h2>
+                <p className="text-sm th-muted mt-2">
+                  A 4-digit OTP has been sent to {otpDestination} before you can make changes to order #{String(order.id).replace('order_', '').slice(-7)}.
+                </p>
+                {order.customerEmail && (
+                  <button
+                    onClick={() => setModifyOtpChannel('email')}
+                    className="text-sm text-primary-400 hover:text-primary-300 transition-colors mt-2"
+                    type="button"
+                  >
+                    Send to email
+                  </button>
+                )}
+              </div>
+              <button onClick={() => setModifyOtpOpen(false)} className="w-10 h-10 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            <label className="block">
+              <span className="block text-sm th-muted mb-2">4-digit OTP</span>
+              <input
+                className="glass-input w-full rounded-2xl px-4 py-3.5 text-lg tracking-[0.35em] text-center"
+                value={modifyOtpValue}
+                onChange={e => setModifyOtpValue(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                inputMode="numeric"
+                placeholder="0000"
+                autoFocus
+              />
+            </label>
+
+            {modifyOtpError && <p className="text-sm text-rose-500 mt-3">{modifyOtpError}</p>}
+
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setModifyOtpOpen(false)} className="flex-1 px-4 py-3 rounded-2xl border border-black/8 dark:border-white/10 text-sm font-medium th-muted hover:th-heading transition-colors">
+                Cancel
+              </button>
+              <button onClick={verifyModifyOtp} className="flex-1 btn-primary text-sm py-3 rounded-2xl">
+                Verify OTP
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
