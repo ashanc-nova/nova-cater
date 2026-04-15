@@ -267,10 +267,10 @@ export default function OrderDetails() {
     <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-16">
       <div className="mb-8 animate-slide-up">
         <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors mb-4">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
         </button>
         <div className="inline-flex items-center gap-2 badge-glass text-primary-300">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
           Order Details
         </div>
       </div>
@@ -301,14 +301,14 @@ export default function OrderDetails() {
                     value: 'pickup',
                     label: 'Pickup',
                     icon: (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     ),
                   },
                   {
                     value: 'delivery',
                     label: 'Delivery',
                     icon: (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.106-1.789l5-2.5a2 2 0 011.788 0l5 2.5A2 2 0 0117 8.618v6.764a2 2 0 01-1.106 1.79L10 20m0 0l5-2.5M10 20V10"/></svg>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A2 2 0 013 15.382V8.618a2 2 0 011.106-1.789l5-2.5a2 2 0 011.788 0l5 2.5A2 2 0 0117 8.618v6.764a2 2 0 01-1.106 1.79L10 20m0 0l5-2.5M10 20V10" /></svg>
                     ),
                   },
                 ].map(option => {
@@ -355,7 +355,7 @@ export default function OrderDetails() {
                       className="shrink-0 th-faint hover:th-heading transition-colors"
                       aria-label="Open date picker"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10m-11 9h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v11a2 2 0 002 2z"/></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10m-11 9h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v11a2 2 0 002 2z" /></svg>
                     </button>
                     <input
                       ref={nativeDateInputRef}
@@ -471,7 +471,7 @@ export default function OrderDetails() {
               <div className="flex flex-wrap gap-3">
                 {[
                   { value: 'pay-later', label: 'Pay Later' },
-                  { value: 'pay-deposit', label: 'Paid Deposit' },
+                  { value: 'pay-deposit', label: 'Pay Deposit' },
                   { value: 'pay-full', label: 'Full Payment' },
                 ].map(option => {
                   const active = paymentOption === option.value
@@ -479,7 +479,7 @@ export default function OrderDetails() {
                     <button
                       key={option.value}
                       onClick={() => setPaymentOption(option.value)}
-                      className={`px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${active ? 'bg-primary-500/12 border-primary-400 text-primary-400' : 'border-black/10 dark:border-white/10 th-muted hover:border-primary-300/30'}`}
+                      className={`px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${active ? 'bg-primary-500/12 border-primary-400 text-primary-500 dark:bg-primary-500/20 dark:border-primary-300/70 dark:text-white dark:shadow-[0_10px_24px_rgba(199,33,41,0.24)]' : 'border-black/10 dark:border-white/10 th-muted hover:border-primary-300/30'}`}
                     >
                       {option.label}
                     </button>
@@ -522,18 +522,6 @@ export default function OrderDetails() {
                     </button>
                   </div>
 
-                  <label className="block">
-                    <span className="block text-sm th-muted mb-2">Custom deposit</span>
-                    <input
-                      className="glass-input w-full rounded-2xl px-4 py-3.5 text-sm"
-                      type="number"
-                      min="0"
-                      max={total.toFixed(2)}
-                      step="0.01"
-                      value={depositAmount}
-                      onChange={e => setDepositAmount(Math.min(Number(e.target.value || 0), Number(total.toFixed(2))))}
-                    />
-                  </label>
                 </div>
               )}
             </div>
@@ -546,7 +534,7 @@ export default function OrderDetails() {
               <div className="glass rounded-[28px] p-5 mb-5">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center">
-                    <svg className="w-5 h-5 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <svg className="w-5 h-5 th-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                   </div>
                   <h2 className="text-[28px] font-bold tracking-tight th-heading">Items</h2>
                 </div>
@@ -574,45 +562,45 @@ export default function OrderDetails() {
               </div>
 
               <button onClick={editOrder} className="glass rounded-[28px] p-5 w-full flex items-center justify-between mb-5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 rounded-full bg-primary-500/15 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    </div>
-                    <div>
-                      <p className="text-[18px] font-semibold th-heading">Edit order</p>
-                      <p className="th-muted text-sm">Go back and adjust menu items</p>
-                    </div>
+                <div className="flex items-center gap-4 text-left">
+                  <div className="w-12 h-12 rounded-full bg-primary-500/15 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                   </div>
-                <svg className="w-5 h-5 th-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                  <div>
+                    <p className="text-[18px] font-semibold th-heading">Edit order</p>
+                    <p className="th-muted text-sm">Go back and adjust menu items</p>
+                  </div>
+                </div>
+                <svg className="w-5 h-5 th-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
               </button>
 
               <div className="mt-auto">
                 <div className="glass rounded-[28px] p-5">
-                <div className="space-y-3 pb-5 border-b border-dashed border-black/10 dark:border-white/10">
-                  <div className="flex items-center justify-between text-base">
-                    <span className="th-muted">Subtotal</span>
-                    <span className="th-heading font-medium">{formatCurrency(cartSubtotal)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-base">
-                    <span className="th-muted">Tax</span>
-                    <span className="th-heading font-medium">{formatCurrency(tax)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-base">
-                    <span className="th-muted">Service fee</span>
-                    <span className="th-heading font-medium">{formatCurrency(serviceFee)}</span>
-                  </div>
-                  {paymentOption === 'pay-deposit' && (
+                  <div className="space-y-3 pb-5 border-b border-dashed border-black/10 dark:border-white/10">
                     <div className="flex items-center justify-between text-base">
-                      <span className="th-muted">Deposit due now</span>
-                      <span className="th-heading font-medium">{formatCurrency(Math.min(depositAmount || 0, total))}</span>
+                      <span className="th-muted">Subtotal</span>
+                      <span className="th-heading font-medium">{formatCurrency(cartSubtotal)}</span>
                     </div>
-                  )}
+                    <div className="flex items-center justify-between text-base">
+                      <span className="th-muted">Tax</span>
+                      <span className="th-heading font-medium">{formatCurrency(tax)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-base">
+                      <span className="th-muted">Service fee</span>
+                      <span className="th-heading font-medium">{formatCurrency(serviceFee)}</span>
+                    </div>
+                    {paymentOption === 'pay-deposit' && (
+                      <div className="flex items-center justify-between text-base">
+                        <span className="th-muted">Deposit due now</span>
+                        <span className="th-heading font-medium">{formatCurrency(Math.min(depositAmount || 0, total))}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between pt-5">
+                    <span className="text-[28px] font-bold tracking-tight th-heading">Total</span>
+                    <span className="text-[30px] font-bold tracking-tight gradient-text">{formatCurrency(total)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between pt-5">
-                  <span className="text-[28px] font-bold tracking-tight th-heading">Total</span>
-                  <span className="text-[30px] font-bold tracking-tight gradient-text">{formatCurrency(total)}</span>
-                </div>
-              </div>
 
                 <button onClick={placeOrder} className="w-full btn-primary text-base py-4 mt-5 flex items-center justify-center gap-3 rounded-[28px]">
                   {paymentOption === 'pay-later' ? 'Confirm Order' : paymentOption === 'pay-deposit' ? `Pay ${formatCurrency(Math.min(depositAmount || 0, total))} & Confirm` : 'Pay & Confirm'}
@@ -636,7 +624,7 @@ export default function OrderDetails() {
                 className="w-10 h-10 rounded-full glass flex items-center justify-center th-muted hover:th-heading transition-colors shrink-0"
                 aria-label="Close validation message"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 18 6M6 6l12 12"/></svg>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
