@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { enterpriseLocations } from '../data/enterpriseLocations'
+import { tenantConfig } from '../data/tenantConfig'
+import { getStorageValue, setStorageValue, storageKeys } from '../utils/storage'
 
-const SELECTED_LOCATION_KEY = 'snsSelectedLocationRef'
 const LocationContext = createContext()
 
 function getDistanceInKm(lat1, lng1, lat2, lng2) {
@@ -18,21 +18,22 @@ function getDistanceInKm(lat1, lng1, lat2, lng2) {
 }
 
 export function LocationProvider({ children }) {
+  const enterpriseLocations = tenantConfig.locations
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
-    const saved = localStorage.getItem(SELECTED_LOCATION_KEY)
+    const saved = getStorageValue(storageKeys.selectedLocationId)
     if (saved && enterpriseLocations.some(location => location.id === saved)) {
       return saved
     }
     return enterpriseLocations[0]?.id || ''
   })
   const [hasSavedLocation] = useState(() => {
-    const saved = localStorage.getItem(SELECTED_LOCATION_KEY)
+    const saved = getStorageValue(storageKeys.selectedLocationId)
     return Boolean(saved && enterpriseLocations.some(location => location.id === saved))
   })
 
   useEffect(() => {
     if (selectedLocationId) {
-      localStorage.setItem(SELECTED_LOCATION_KEY, selectedLocationId)
+      setStorageValue(storageKeys.selectedLocationId, selectedLocationId)
     }
   }, [selectedLocationId])
 

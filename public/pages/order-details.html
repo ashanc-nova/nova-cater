@@ -6,8 +6,8 @@
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 Order Details
             </div>
-            <h1 class="font-display font-extrabold text-3xl md:text-4xl th-heading">Finalize Your Order</h1>
-            <p class="th-faint mt-2">Fill in your event details and review your order</p>
+            <h1 class="font-display font-extrabold text-3xl md:text-4xl th-heading">Order Details</h1>
+            <p class="th-faint mt-2">Fill in your event details and review your order.</p>
         </div>
 
         <div class="flex flex-col lg:flex-row gap-8">
@@ -25,7 +25,7 @@
                         <div>
                             <label class="block th-muted text-sm font-medium mb-2" for="eventName">Event Name</label>
                             <input class="glass-input w-full py-3 px-4 rounded-2xl text-sm"
-                                   id="eventName" type="text" placeholder="e.g., Annual Team Dinner"
+                                   id="eventName" type="text" placeholder="Enter event name"
                                    x-model="eventName">
                         </div>
 
@@ -73,14 +73,14 @@
                         <div>
                             <label class="block th-muted text-sm font-medium mb-2" for="guestCount">Number of Guests</label>
                             <input class="glass-input w-full py-3 px-4 rounded-2xl text-sm"
-                                   id="guestCount" type="number" placeholder="How many guests?"
+                                   id="guestCount" type="number" placeholder="Enter party size"
                                    x-model="guestCount">
                         </div>
 
                         <div>
                             <label class="block th-muted text-sm font-medium mb-2" for="specialRequirements">Special Requirements</label>
                             <textarea class="glass-input w-full py-3 px-4 rounded-2xl text-sm resize-none"
-                                      id="specialRequirements" rows="3" placeholder="Allergies, dietary needs, setup preferences..."
+                                      id="specialRequirements" rows="3" placeholder="Enter special requirements"
                                       x-model="specialRequirements"></textarea>
                         </div>
                     </div>
@@ -145,14 +145,14 @@
                                     <input type="radio" name="payment-option" value="pay-later" x-model="paymentOption" class="text-primary-500">
                                     <div>
                                         <span class="text-sm font-medium th-heading">Pay Later</span>
-                                        <p class="text-xs th-ghost">Pay at the restaurant</p>
+                                        <p class="text-xs th-ghost">Pay according to tenant-configured flow</p>
                                     </div>
                                 </label>
                                 <label class="flex items-center gap-3 glass rounded-xl p-3 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all">
                                     <input type="radio" name="payment-option" value="pay-deposit" x-model="paymentOption" class="text-primary-500">
                                     <div>
                                         <span class="text-sm font-medium th-heading">Pay Deposit</span>
-                                        <p class="text-xs th-ghost">Partial payment now</p>
+                                        <p class="text-xs th-ghost">Partial payment amount configured by tenant</p>
                                     </div>
                                 </label>
                                 <label class="flex items-center gap-3 glass rounded-xl p-3 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-all">

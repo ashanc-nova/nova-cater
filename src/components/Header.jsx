@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import { useLocationContext } from '../context/LocationContext'
+import { useTenant } from '../context/TenantContext'
 import HeaderLocationPopover from './HeaderLocationPopover'
 import LocationSelectorModal from './LocationSelectorModal'
+import BrandMark from './BrandMark'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -12,6 +14,7 @@ export default function Header() {
   const [locationModalOpen, setLocationModalOpen] = useState(false)
   const { mode, toggle } = useTheme()
   const { selectedLocation } = useLocationContext()
+  const { brand, events } = useTenant()
   const locationTriggerRef = React.useRef(null)
 
   useEffect(() => {
@@ -26,9 +29,9 @@ export default function Header() {
       setLocationModalOpen(true)
     }
 
-    window.addEventListener('sns:open-location-modal', handleOpenLocationModal)
-    return () => window.removeEventListener('sns:open-location-modal', handleOpenLocationModal)
-  }, [])
+    window.addEventListener(events.openLocationModal, handleOpenLocationModal)
+    return () => window.removeEventListener(events.openLocationModal, handleOpenLocationModal)
+  }, [events.openLocationModal])
 
   return (
     <>
@@ -40,12 +43,10 @@ export default function Header() {
               <div className="flex items-center gap-2.5 md:gap-3 min-w-0">
                 <Link
                   to="/"
-                  className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-glow transition-all duration-300 hover:shadow-glow-lg hover:scale-105 shrink-0"
+                  className="transition-all duration-300 hover:shadow-glow-lg hover:scale-105 shrink-0"
                   aria-label="Go to home"
                 >
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                  </svg>
+                  <BrandMark />
                 </Link>
 
                 <button
@@ -54,7 +55,7 @@ export default function Header() {
                   className="group rounded-2xl px-1 py-1.5 md:px-1.5 md:py-1 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 text-left min-w-0"
                 >
                   <div className="block min-w-0">
-                    <p className="font-display font-bold text-lg md:text-xl leading-none th-heading tracking-tight">SNS</p>
+                    <p className="font-display font-bold text-lg md:text-xl leading-none th-heading tracking-tight">{brand.displayName}</p>
                     <p className="text-[11px] md:text-xs th-muted mt-1 leading-none truncate max-w-[132px] sm:max-w-[180px] md:max-w-none">
                       {selectedLocation ? `${selectedLocation.city}, ${selectedLocation.stateCode}` : 'Select location'}
                     </p>

@@ -3,66 +3,24 @@ import { Link } from 'react-router-dom'
 import Carousel from '../components/Carousel'
 import Cart from '../components/Cart'
 import { useCart } from '../context/CartContext'
-import { categories, menuItems } from '../data/menuData'
+import { useTenant } from '../context/TenantContext'
 
-const platterSizeOptions = [
-  { id: 'quarter', label: 'Quarter Tray', multiplier: 0.6, unitLabel: 'quarter tray', servesMultiplier: 0.5 },
-  { id: 'half', label: 'Half Tray', multiplier: 0.8, unitLabel: 'half tray', servesMultiplier: 0.75 },
-  { id: 'full', label: 'Full Tray', multiplier: 1, unitLabel: 'full tray', servesMultiplier: 1 },
-]
-
-const platterModifierSections = [
-  {
-    id: 'cheese',
-    title: 'Cheese Style',
-    type: 'single',
-    options: [
-      { id: 'american', label: 'American Cheese', priceDelta: 0 },
-      { id: 'swiss', label: 'Swiss Cheese', priceDelta: 1.5 },
-      { id: 'double-cheese', label: 'Extra Cheese', priceDelta: 2.5 },
-    ],
-  },
-  {
-    id: 'toppings',
-    title: 'Add Extras',
-    type: 'multi',
-    options: [
-      { id: 'grilled-onions', label: 'Grilled Onions', priceDelta: 1.5 },
-      { id: 'pickles', label: 'Extra Pickles', priceDelta: 1 },
-      { id: 'bacon', label: 'Crispy Bacon', priceDelta: 4 },
-      { id: 'jalapeno', label: 'Jalapeno Relish', priceDelta: 1.5 },
-    ],
-  },
-  {
-    id: 'sauce',
-    title: 'House Sauce',
-    type: 'single',
-    options: [
-      { id: 'signature', label: 'Signature Sauce', priceDelta: 0 },
-      { id: 'bbq', label: 'Smoky BBQ', priceDelta: 0.75 },
-      { id: 'ranch', label: 'Ranch Dip Cups', priceDelta: 1.25 },
-    ],
-  },
-]
+const cloneModifierState = (value) => JSON.parse(JSON.stringify(value))
 
 export default function Home() {
+  const { hero, menu } = useTenant()
+  const categories = menu.categories
+  const defaultModifierState = cloneModifierState(menu.modifierSchemas.platter.defaultState)
   const [activeCategory, setActiveCategory] = useState(0)
   const [menuLayout, setMenuLayout] = useState('grid')
   const [modifierItem, setModifierItem] = useState(null)
-  const [modifierState, setModifierState] = useState({
-    size: 'full',
-    cheese: 'american',
-    toppings: [],
-    sauce: 'signature',
-    quantity: 1,
-  })
+  const [modifierState, setModifierState] = useState(defaultModifierState)
   const sectionRefs = useRef({})
   const isAutoScrollingRef = useRef(false)
   const { addToCart, isInCart, getCartItemIndex, getCartItemQuantity, increaseQuantity, decreaseQuantity } = useCart()
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
-  const highlightedItems = new Set([0, 1, 3])
   const getStickyCategoryOffset = () => (window.innerWidth < 768 ? 108 : 168)
 
   useEffect(() => {
@@ -102,15 +60,14 @@ export default function Home() {
     }, 550)
   }
 
-  const openModifierModal = (item) => {
-    setModifierItem(item)
-    setModifierState({
-      size: 'full',
-      cheese: 'american',
-      toppings: [],
-      sauce: 'signature',
-      quantity: 1,
-    })
+  const getDefaultModifierState = (modifierSchemaId) => {
+    const schema = menu.modifierSchemas[modifierSchemaId]
+    return cloneModifierState(schema?.defaultState || { quantity: 1 })
+  }
+
+  const openModifierModal = (item, modifierSchemaId) => {
+    setModifierItem({ ...item, modifierSchemaId })
+    setModifierState(getDefaultModifierState(modifierSchemaId))
   }
 
   const closeModifierModal = () => {
@@ -129,11 +86,16 @@ export default function Home() {
 
   const getConfiguredPlatter = () => {
     if (!modifierItem) return null
+    const modifierSchema = menu.modifierSchemas[modifierItem.modifierSchemaId]
+    if (!modifierSchema) return null
 
-    const selectedSize = platterSizeOptions.find(option => option.id === modifierState.size) || platterSizeOptions[2]
-    const selectedCheese = platterModifierSections[0].options.find(option => option.id === modifierState.cheese)
-    const selectedSauce = platterModifierSections[2].options.find(option => option.id === modifierState.sauce)
-    const selectedToppings = platterModifierSections[1].options.filter(option => modifierState.toppings.includes(option.id))
+    const selectedSize = modifierSchema.sizeOptions.find(option => option.id === modifierState.size) || modifierSchema.sizeOptions.at(-1)
+    const cheeseSection = modifierSchema.sections.find(section => section.id === 'cheese')
+    const sauceSection = modifierSchema.sections.find(section => section.id === 'sauce')
+    const toppingsSection = modifierSchema.sections.find(section => section.id === 'toppings')
+    const selectedCheese = cheeseSection?.options.find(option => option.id === modifierState.cheese)
+    const selectedSauce = sauceSection?.options.find(option => option.id === modifierState.sauce)
+    const selectedToppings = toppingsSection?.options.filter(option => modifierState.toppings.includes(option.id)) || []
 
     const modifierUpcharge = [
       selectedCheese?.priceDelta || 0,
@@ -171,6 +133,7 @@ export default function Home() {
 
   const configuredPlatter = getConfiguredPlatter()
   const configuredTotal = configuredPlatter ? configuredPlatter.price * modifierState.quantity : 0
+  const activeModifierSchema = modifierItem ? menu.modifierSchemas[modifierItem.modifierSchemaId] : null
 
   const addConfiguredPlatterToCart = () => {
     if (!configuredPlatter) return
@@ -187,65 +150,41 @@ export default function Home() {
           <div className="md:w-1/2 flex flex-col justify-center animate-slide-up">
             <div className="inline-flex items-center gap-2 badge-glass text-primary-300 mb-3 w-fit">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse-slow"></span>
-              Catering &bull; Platters &bull; Party Trays
+              {hero.badge}
             </div>
             <h1 className="font-display font-extrabold text-[2.2rem] leading-[0.95] md:text-5xl th-heading mb-3 tracking-tight">
-              Famous<br />
-              <span className="gradient-text">Steakburger Catering</span>
+              {hero.titleLeading}<br />
+              <span className="gradient-text">{hero.titleAccent}</span>
             </h1>
             <p className="th-muted text-sm md:text-base max-w-lg leading-relaxed mb-4">
-              Platters, trays, and shake packs for any event. The original better burger since 1934.
+              {hero.description}
             </p>
             <div className="flex items-center gap-4">
               <Link to="/my-orders" className="btn-ghost text-sm py-2.5 px-5 inline-flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                View My Orders
+                {hero.ctaLabel}
               </Link>
             </div>
           </div>
 
           {/* Right: Offers Carousel */}
           <div className="md:w-1/2 flex flex-col justify-center animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            <Carousel slideCount={3} autoPlay={true} interval={4000}>
-              <div className="w-full flex-shrink-0">
+            <Carousel slideCount={hero.offers.length} autoPlay={true} interval={4000}>
+              {hero.offers.map(offer => (
+              <div key={offer.id} className="w-full flex-shrink-0">
                 <div className="relative">
-                  <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=350&fit=crop" alt="Catering Deal" className="w-full h-44 object-cover" />
+                  <img src={offer.image} alt={offer.title} className="w-full h-44 object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute bottom-3 left-4">
-                    <span className="badge-glass text-primary-300 text-xs">20% OFF</span>
+                    <span className="badge-glass text-primary-300 text-xs">{offer.badge}</span>
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-display font-bold text-lg th-heading mb-1">First Catering Order</h3>
-                  <p className="th-muted text-sm">Get 20% off your first catering order of $100+</p>
+                  <h3 className="font-display font-bold text-lg th-heading mb-1">{offer.title}</h3>
+                  <p className="th-muted text-sm">{offer.description}</p>
                 </div>
               </div>
-              <div className="w-full flex-shrink-0">
-                <div className="relative">
-                  <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&h=350&fit=crop" alt="Shake Package" className="w-full h-44 object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-3 left-4">
-                    <span className="badge-glass text-primary-300 text-xs">FREE SHAKES</span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display font-bold text-lg th-heading mb-1">Free Shake Pack</h3>
-                  <p className="th-muted text-sm">Order 3+ platters and get a 10-cup shake pack free</p>
-                </div>
-              </div>
-              <div className="w-full flex-shrink-0">
-                <div className="relative">
-                  <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=350&fit=crop" alt="Party Bundle" className="w-full h-44 object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-3 left-4">
-                    <span className="badge-glass text-primary-300 text-xs">PARTY BUNDLE</span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display font-bold text-lg th-heading mb-1">The Game Day Bundle</h3>
-                  <p className="th-muted text-sm">2 burger platters + fries tray + drinks for $139.99</p>
-                </div>
-              </div>
+              ))}
             </Carousel>
           </div>
         </div>
@@ -284,14 +223,14 @@ export default function Home() {
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide flex-1">
                   {categories.map((category, index) => (
                     <button
-                      key={index}
+                      key={category.id}
                       onClick={() => scrollToCategory(index)}
                       className={`px-5 py-2.5 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all duration-300 ${activeCategory === index
                         ? 'bg-primary-500 text-white'
                         : 'border border-black/10 dark:border-white/10 th-muted hover:th-heading'
                         }`}
                     >
-                      {category}
+                      {category.label}
                     </button>
                   ))}
                 </div>
@@ -321,18 +260,19 @@ export default function Home() {
 
             <div className="space-y-10">
               {categories.map((category, categoryIndex) => {
-                const items = menuItems[category] || []
-                const isSteakburgerCategory = category === 'Steakburger Platters'
+                const items = menu.itemsByCategoryId[category.id] || []
+                const hasModifierSchema = Boolean(category.modifierSchemaId)
+                const highlightedItems = new Set(category.highlightedItemIndexes || [])
 
                 return (
                   <section
-                    key={category}
+                    key={category.id}
                     ref={element => {
                       sectionRefs.current[categoryIndex] = element
                     }}
                     className="scroll-mt-44"
                   >
-                    <h2 className="font-display text-2xl font-bold th-heading mb-5">{category}</h2>
+                    <h2 className="font-display text-2xl font-bold th-heading mb-5">{category.label}</h2>
 
                     {menuLayout === 'grid' && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
@@ -376,7 +316,7 @@ export default function Home() {
 
                                 <div className="mt-4 w-full flex justify-end">
                                   <button
-                                    onClick={() => isSteakburgerCategory ? openModifierModal(item) : addToCart(item)}
+                                    onClick={() => hasModifierSchema ? openModifierModal(item, category.modifierSchemaId) : addToCart(item)}
                                     className="relative w-11 h-11 rounded-2xl bg-primary-500 text-white hover:bg-primary-600 transition-colors inline-flex items-center justify-center shadow-lg shadow-primary-500/30"
                                   >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
@@ -411,7 +351,7 @@ export default function Home() {
                               <div className="flex items-center justify-between">
                                 <span className="text-sm font-bold gradient-text">${item.price.toFixed(2)}</span>
                                 <button
-                                  onClick={() => isSteakburgerCategory ? openModifierModal(item) : addToCart(item)}
+                                  onClick={() => hasModifierSchema ? openModifierModal(item, category.modifierSchemaId) : addToCart(item)}
                                   className="relative w-8 h-8 rounded-xl bg-primary-500 text-white flex items-center justify-center hover:bg-primary-600 transition-colors"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
@@ -444,7 +384,7 @@ export default function Home() {
               <button onClick={closeModifierModal} className="w-10 h-10 rounded-full border border-black/10 dark:border-white/10 th-muted flex items-center justify-center hover:th-heading transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <span className="text-lg md:text-xl font-semibold th-heading">Customize platter</span>
+              <span className="text-lg md:text-xl font-semibold th-heading">{activeModifierSchema?.modalTitle || 'Customize item'}</span>
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 md:px-5 py-5">
@@ -466,7 +406,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {platterSizeOptions.map(option => {
+                  {activeModifierSchema?.sizeOptions.map(option => {
                     const selected = modifierState.size === option.id
                     const optionPrice = (modifierItem.price * option.multiplier).toFixed(2)
                     return (
@@ -489,7 +429,7 @@ export default function Home() {
                 </div>
               </section>
 
-              {platterModifierSections.map(section => (
+              {activeModifierSchema?.sections.map(section => (
                 <section key={section.id} className="py-5 border-b border-black/5 dark:border-white/5 last:border-b-0">
                   <div className="flex items-end justify-between mb-3">
                     <div>

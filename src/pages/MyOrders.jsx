@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getJSONStorage, setJSONStorage, storageKeys } from '../utils/storage'
 
 const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
@@ -47,7 +48,7 @@ export default function MyOrders() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    let saved = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
+    let saved = getJSONStorage(storageKeys.orders, [])
     saved = saved.map((order, index) => ({
       id: order.id || `order_${Date.now()}_${index}`,
       eventName: order.eventName || 'Unnamed Event',
@@ -62,12 +63,12 @@ export default function MyOrders() {
 
     setOrders(saved)
 
-    const persistedTrustedIds = JSON.parse(localStorage.getItem('snsTrustedOrderIds') || '[]')
+    const persistedTrustedIds = getJSONStorage(storageKeys.trustedOrderIds, [])
     if (persistedTrustedIds.length > 0) {
       setTrustedOrderIds(persistedTrustedIds)
     } else {
       const seededIds = saved.map(order => order.id)
-      localStorage.setItem('snsTrustedOrderIds', JSON.stringify(seededIds))
+      setJSONStorage(storageKeys.trustedOrderIds, seededIds)
       setTrustedOrderIds(seededIds)
     }
   }, [])
@@ -107,7 +108,7 @@ export default function MyOrders() {
   const unlockOrderForDevice = (orderId) => {
     const nextTrustedIds = trustedOrderIds.includes(orderId) ? trustedOrderIds : [orderId, ...trustedOrderIds]
     setTrustedOrderIds(nextTrustedIds)
-    localStorage.setItem('snsTrustedOrderIds', JSON.stringify(nextTrustedIds))
+    setJSONStorage(storageKeys.trustedOrderIds, nextTrustedIds)
   }
 
   const openOrder = (order) => {

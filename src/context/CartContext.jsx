@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react'
+import { getJSONStorage, removeStorageValue, setJSONStorage, storageKeys } from '../utils/storage'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('snsAppCart')
-    return saved ? JSON.parse(saved) : []
+    return getJSONStorage(storageKeys.cart, [])
   })
 
   useEffect(() => {
-    localStorage.setItem('snsAppCart', JSON.stringify(cart))
+    setJSONStorage(storageKeys.cart, cart)
   }, [cart])
 
   const addToCart = (item) => {
@@ -70,7 +70,7 @@ export function CartProvider({ children }) {
 
   const clearCart = () => {
     setCart([])
-    localStorage.removeItem('snsAppCart')
+    removeStorageValue(storageKeys.cart)
   }
 
   return (

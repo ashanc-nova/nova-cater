@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { setJSONStorage, storageKeys } from '../utils/storage'
 
 export default function Cart() {
   const { cart, increaseQuantity, decreaseQuantity, removeFromCart, cartTotal } = useCart()
@@ -9,7 +10,7 @@ export default function Cart() {
   const expandedPanelRef = useRef(null)
 
   const proceedToCheckout = () => {
-    localStorage.setItem('snsAppCart', JSON.stringify(cart))
+    setJSONStorage(storageKeys.cart, cart)
     navigate('/order-details')
   }
 

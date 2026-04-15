@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -6,8 +6,15 @@ import Home from './pages/Home'
 import OrderDetails from './pages/OrderDetails'
 import MyOrders from './pages/MyOrders'
 import OrderSummary from './pages/OrderSummary'
+import { useTenant } from './context/TenantContext'
 
 export default function App() {
+  const { brand } = useTenant()
+
+  useEffect(() => {
+    document.title = brand.siteTitle
+  }, [brand.siteTitle])
+
   return (
     <>
       {/* Decorative background orbs */}

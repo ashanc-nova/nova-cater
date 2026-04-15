@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useLocationContext } from '../context/LocationContext'
+import { getJSONStorage, removeStorageValue, setJSONStorage, storageKeys } from '../utils/storage'
 
 const formatCurrency = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
@@ -73,6 +75,7 @@ const getNativePickerDate = (isoDate) => isoDate || getTodayDateString()
 
 export default function OrderDetails() {
   const { cart, clearCart } = useCart()
+  const { selectedLocation } = useLocationContext()
   const navigate = useNavigate()
   const nativeDateInputRef = useRef(null)
 
@@ -98,8 +101,8 @@ export default function OrderDetails() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    const saved = JSON.parse(localStorage.getItem('snsAppEventDetails') || '{}')
-    const lastCustomerDetails = JSON.parse(localStorage.getItem('snsLastCustomerDetails') || '{}')
+    const saved = getJSONStorage(storageKeys.eventDetails, {})
+    const lastCustomerDetails = getJSONStorage(storageKeys.lastCustomerDetails, {})
     setEventName(saved.eventName || '')
     if (saved.eventDateTime) {
       const [savedDate, savedTime] = saved.eventDateTime.split('T')
@@ -154,7 +157,7 @@ export default function OrderDetails() {
       : 'You will pay the full order total now so nothing is left due at pickup or delivery.'
 
   const saveEventDetails = () => {
-    localStorage.setItem('snsAppEventDetails', JSON.stringify({
+    setJSONStorage(storageKeys.eventDetails, {
       eventName,
       eventDateTime,
       serviceType,
@@ -165,7 +168,7 @@ export default function OrderDetails() {
       customerPhone,
       customerEmail,
       specialRequirements,
-    }))
+    })
   }
 
   const editOrder = () => {
@@ -231,6 +234,13 @@ export default function OrderDetails() {
       customerPhone,
       customerEmail,
       specialRequirements,
+      locationId: selectedLocation?.id || '',
+      locationName: selectedLocation?.name || '',
+      locationAddress: selectedLocation?.address || '',
+      locationPhoneNumber: selectedLocation?.phoneNumber || '',
+      locationEmailAddress: selectedLocation?.emailAddress || '',
+      businessRefId: selectedLocation?.businessRefId || '',
+      restaurantRefId: selectedLocation?.restaurantRefId || '',
       cart,
       subtotal: cartSubtotal,
       tax,
@@ -243,23 +253,23 @@ export default function OrderDetails() {
       placedDate: new Date().toISOString(),
     }
 
-    const orders = JSON.parse(localStorage.getItem('snsAppOrders') || '[]')
+    const orders = getJSONStorage(storageKeys.orders, [])
     orders.unshift(orderDetails)
-    localStorage.setItem('snsAppOrders', JSON.stringify(orders))
-    localStorage.setItem('snsLastCustomerDetails', JSON.stringify({
+    setJSONStorage(storageKeys.orders, orders)
+    setJSONStorage(storageKeys.lastCustomerDetails, {
       customerName,
       customerPhone,
       customerEmail,
-    }))
+    })
 
-    const trustedOrderIds = JSON.parse(localStorage.getItem('snsTrustedOrderIds') || '[]')
+    const trustedOrderIds = getJSONStorage(storageKeys.trustedOrderIds, [])
     if (!trustedOrderIds.includes(orderId)) {
       trustedOrderIds.unshift(orderId)
-      localStorage.setItem('snsTrustedOrderIds', JSON.stringify(trustedOrderIds))
+      setJSONStorage(storageKeys.trustedOrderIds, trustedOrderIds)
     }
 
     clearCart()
-    localStorage.removeItem('snsAppEventDetails')
+    removeStorageValue(storageKeys.eventDetails)
     navigate(`/order-summary?id=${orderId}`)
   }
 

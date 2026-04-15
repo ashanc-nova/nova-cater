@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNS</title>
+    <title>Restaurant Catering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
       (function () {
         try {
-          var THEME_VERSION_KEY = 'snsThemeVersion';
+          var THEME_VERSION_KEY = 'appThemeVersion';
           var CURRENT_THEME_VERSION = '1';
-          var THEME_MODE_KEY = 'snsThemeMode';
-          var THEME_SELECTED_KEY = 'snsThemeSelected';
+          var THEME_MODE_KEY = 'appThemeMode';
+          var THEME_SELECTED_KEY = 'appThemeSelected';
+          var LEGACY_THEME_MODE_KEY = 'snsThemeMode';
+          var LEGACY_THEME_SELECTED_KEY = 'snsThemeSelected';
+          var LEGACY_THEME_KEY = 'theme';
 
           if (localStorage.getItem(THEME_VERSION_KEY) !== CURRENT_THEME_VERSION) {
             localStorage.setItem(THEME_VERSION_KEY, CURRENT_THEME_VERSION);
-            localStorage.setItem(THEME_MODE_KEY, 'light');
-            localStorage.setItem(THEME_SELECTED_KEY, 'false');
+            var legacyTheme = localStorage.getItem(LEGACY_THEME_MODE_KEY) || localStorage.getItem(LEGACY_THEME_KEY);
+            var legacySelected = localStorage.getItem(LEGACY_THEME_SELECTED_KEY) === 'true';
+            localStorage.setItem(THEME_MODE_KEY, legacyTheme === 'dark' || legacyTheme === 'light' ? legacyTheme : 'light');
+            localStorage.setItem(THEME_SELECTED_KEY, legacySelected ? 'true' : 'false');
           }
 
           var themeMode = localStorage.getItem(THEME_MODE_KEY);

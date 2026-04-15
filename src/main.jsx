@@ -5,18 +5,21 @@ import App from './App'
 import { ThemeProvider } from './context/ThemeContext'
 import { CartProvider } from './context/CartContext'
 import { LocationProvider } from './context/LocationContext'
+import { TenantProvider } from './context/TenantContext'
 import './css/styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
-        <LocationProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </LocationProvider>
-      </ThemeProvider>
+      <TenantProvider>
+        <ThemeProvider>
+          <LocationProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </LocationProvider>
+        </ThemeProvider>
+      </TenantProvider>
     </BrowserRouter>
   </React.StrictMode>
 )

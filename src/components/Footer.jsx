@@ -1,12 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useLocationContext } from '../context/LocationContext'
+import { useTenant } from '../context/TenantContext'
+import BrandMark from './BrandMark'
 
 export default function Footer() {
   const { selectedLocation } = useLocationContext()
+  const { brand, events } = useTenant()
 
   const openLocationModal = () => {
-    window.dispatchEvent(new CustomEvent('sns:open-location-modal'))
+    window.dispatchEvent(new CustomEvent(events.openLocationModal))
   }
 
   return (
@@ -20,14 +23,10 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-2.5 mb-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-glow">
-                  <svg className="w-4.5 h-4.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                  </svg>
-                </div>
-                <span className="font-display font-bold text-lg th-heading">SNS</span>
+                <BrandMark className="w-9 h-9" iconClassName="w-4.5 h-4.5" />
+                <span className="font-display font-bold text-lg th-heading">{brand.displayName}</span>
               </div>
-              <p className="th-faint text-[13px] leading-relaxed max-w-xs">Famous for steakburgers and hand-dipped milkshakes since 1934. The original better burger.</p>
+              <p className="th-faint text-[13px] leading-relaxed max-w-xs">{brand.description}</p>
             </div>
 
             {/* Quick Links */}
@@ -73,7 +72,7 @@ export default function Footer() {
           {/* Bottom Bar */}
           <div className="border-t border-black/5 dark:border-white/5 pt-4 flex flex-col sm:flex-row items-center justify-between gap-2.5 md:gap-4">
             <div className="flex items-center gap-3">
-              <span className="th-ghost text-xs">&copy; 2026 SNS. All rights reserved.</span>
+              <span className="th-ghost text-xs">&copy; 2026 {brand.legalName}. All rights reserved.</span>
             </div>
             <div className="flex items-center gap-4 md:gap-6">
               <a href="#" className="th-ghost hover:th-muted text-xs transition-colors">Privacy</a>
