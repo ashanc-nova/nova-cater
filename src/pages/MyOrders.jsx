@@ -156,7 +156,7 @@ export default function MyOrders() {
             {[
               { id: 'all', label: 'All' },
               { id: 'upcoming', label: 'Upcoming' },
-              { id: 'completed', label: 'Completed' },
+              { id: 'completed', label: 'Past' },
             ].map(tab => {
               const active = activeTab === tab.id
               return (
